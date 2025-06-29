@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SquareLoader } from 'react-spinners';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-
-
-
-
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -25,46 +22,30 @@ const Signup = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+  }, []);
+
   const validateForm = () => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^\+?[1-9]\d{1,14}$/;
-  
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Invalid email format';
-    }
-  
-    if (!formData.username) {
-      newErrors.username = 'Username is required';
-    }
-  
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    }
-  
-    if (!formData.phone) {
-      newErrors.phone = 'Phone number is required';
-    } else if (!phoneRegex.test(formData.phone)) {
-      newErrors.phone = 'Invalid phone number format';
-    }
-  
-    if (!formData.dateOfBirth) {
-      newErrors.dateOfBirth = 'Date of birth is required';
-    }
-  
-    if (!formData.highestQualification) {
-      newErrors.highestQualification = 'Qualification is required';
-    }
-  
-    if (!formData.avatar) {
-      newErrors.avatar = 'Avatar is required';
-    }
-  
+
+    if (!formData.email) newErrors.email = 'Email is required';
+    else if (!emailRegex.test(formData.email)) newErrors.email = 'Invalid email format';
+
+    if (!formData.username) newErrors.username = 'Username is required';
+    if (!formData.password) newErrors.password = 'Password is required';
+
+    if (!formData.phone) newErrors.phone = 'Phone number is required';
+    else if (!phoneRegex.test(formData.phone)) newErrors.phone = 'Invalid phone number format';
+
+    if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
+    if (!formData.highestQualification) newErrors.highestQualification = 'Qualification is required';
+    if (!formData.avatar) newErrors.avatar = 'Avatar is required';
+
     return newErrors;
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,14 +55,15 @@ const Signup = () => {
       try {
         const data = new FormData();
         Object.keys(formData).forEach(key => {
-          data.append(key, key === 'avatar' ? formData[key] : formData[key]);
+          data.append(key, formData[key]);
         });
-  
+
         const response = await axios.post('http://localhost:8000/api/a2/students/register', data, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         });
+
         toast.success('Account created successfully!');
         navigate('/auth/a2/verify-signup', { state: { email: formData.email } });
       } catch (error) {
@@ -93,165 +75,94 @@ const Signup = () => {
       setErrors(validationErrors);
     }
   };
-  
 
   const handleChange = (e) => {
     const { id, value, files } = e.target;
     setFormData({
       ...formData,
-      [id]: files ? files[0] : value, // Handle file input for avatar
+      [id]: files ? files[0] : value,
     });
-    setErrors({
-      ...errors,
-      [id]: '', // Clear error as user types
-    });
+    setErrors({ ...errors, [id]: '' });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="flex flex-col lg:flex-row w-full lg:w-10/12 xl:w-8/12 shadow-lg rounded-lg overflow-hidden">
-        <div className="hidden lg:flex lg:w-1/2 bg-white p-8 flex-col justify-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">A2 Pyramid</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0f1b] to-[#1a1a2e] text-white">
+      <div className="flex flex-col lg:flex-row w-full lg:w-10/12 xl:w-8/12 rounded-xl overflow-hidden shadow-lg border border-pink-500/10" data-aos="fade-up">
+        <div className="hidden lg:flex lg:w-1/2 bg-[#181828] p-8 flex-col justify-center">
+          <h1 className="text-3xl font-bold text-cyan-400 mb-8">NeuroNest</h1>
           <ul className="space-y-6">
             <li className="flex items-start">
-              <svg className="w-6 h-6 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span className="ml-3 text-lg text-gray-600">Get started quickly</span>
+              <span className="text-pink-400 mr-2">🚀</span>
+              <span className="text-gray-300">Get started quickly with futuristic tools</span>
             </li>
-            <li className="text-sm text-gray-500 ml-9">Integrate with developer-friendly APIs or choose low-code or pre-built solutions.</li>
+            <li className="text-sm text-gray-400 ml-6">Low-code, AI, and developer-friendly APIs.</li>
             <li className="flex items-start">
-              <svg className="w-6 h-6 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span className="ml-3 text-lg text-gray-600">All types of projects</span>
+              <span className="text-pink-400 mr-2">🛠️</span>
+              <span className="text-gray-300">Supports all tech stacks</span>
             </li>
-            <li className="text-sm text-gray-500 ml-9">MERN, AI, SaaS platforms, and more.</li>
+            <li className="text-sm text-gray-400 ml-6">MERN, Machine Learning, SaaS, and more.</li>
           </ul>
         </div>
 
-        <div className="w-full lg:w-1/2 bg-gray-100 p-8 flex justify-center items-center">
+        <div className="w-full lg:w-1/2 bg-[#101020] p-8 flex justify-center items-center">
           <div className="w-full max-w-md">
-            <h2 className="text-2xl font-bold mb-6 text-gray-900">Create your account</h2>
-            <form onSubmit={handleSubmit}>
-              {/* Email Input */}
-              <div className="mb-4">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                />
-                {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
-              </div>
+            <h2 className="text-2xl font-bold mb-6 text-cyan-400">Create your account</h2>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Fields */}
+              {[
+                { id: 'email', label: 'Email', type: 'email', placeholder: 'you@example.com' },
+                { id: 'username', label: 'Your Name', type: 'text', placeholder: 'John Doe' },
+                { id: 'phone', label: 'Phone', type: 'text', placeholder: '+1234567890' },
+                { id: 'dateOfBirth', label: 'Date of Birth', type: 'date' },
+                { id: 'highestQualification', label: 'Highest Qualification', type: 'text', placeholder: 'e.g., BSc IT' },
+                { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••' }
+              ].map(({ id, label, type, placeholder }) => (
+                <div key={id}>
+                  <label htmlFor={id} className="block text-sm font-medium mb-1 text-gray-300">{label}</label>
+                  <input
+                    id={id}
+                    type={type}
+                    value={formData[id] || ''}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 bg-[#181828] border border-cyan-400/20 rounded-md shadow-sm focus:ring-2 focus:ring-pink-500"
+                    placeholder={placeholder}
+                  />
+                  {errors[id] && <p className="text-sm text-red-500 mt-1">{errors[id]}</p>}
+                </div>
+              ))}
 
-              {/* Username Input */}
-              <div className="mb-4">
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700">Your name</label>
+              {/* Avatar */}
+              <div>
+                <label htmlFor="avatar" className="block text-sm font-medium mb-1 text-gray-300">Avatar</label>
                 <input
-                  type="text"
-                  id="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="John Doe"
-                />
-                {errors.username && <p className="text-red-600 text-sm mt-1">{errors.username}</p>}
-              </div>
-
-              {/* Phone Number Input */}
-              <div className="mb-4">
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
-                <input
-                  type="text"
-                  id="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="+1234567890"
-                />
-                {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
-              </div>
-
-              {/* Date of Birth Input */}
-              <div className="mb-4">
-                <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700">Date of Birth</label>
-                <input
-                  type="date"
-                  id="dateOfBirth"
-                  value={formData.dateOfBirth}
-                  onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-                {errors.dateOfBirth && <p className="text-red-600 text-sm mt-1">{errors.dateOfBirth}</p>}
-              </div>
-
-              {/* Highest Qualification Input */}
-              <div className="mb-4">
-                <label htmlFor="highestQualification" className="block text-sm font-medium text-gray-700">Highest Qualification</label>
-                <input
-                  type="text"
-                  id="highestQualification"
-                  value={formData.highestQualification}
-                  onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="e.g., BSc IT"
-                />
-                {errors.highestQualification && <p className="text-red-600 text-sm mt-1">{errors.highestQualification}</p>}
-              </div>
-
-              {/* Avatar Input */}
-              <div className="mb-4">
-                <label htmlFor="avatar" className="block text-sm font-medium text-gray-700">Avatar</label>
-                <input
-                  type="file"
                   id="avatar"
+                  type="file"
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   accept="image/*"
+                  className="w-full px-3 py-2 bg-[#181828] border border-cyan-400/20 rounded-md shadow-sm"
                 />
-                {errors.avatar && <p className="text-red-600 text-sm mt-1">{errors.avatar}</p>}
-              </div>
-
-              {/* Password Input */}
-              <div className="mb-4">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                <input
-                  type="password"
-                  id="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Enter your password"
-                  autoComplete="new-password" 
-                />
-                {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password}</p>}
+                {errors.avatar && <p className="text-sm text-red-500 mt-1">{errors.avatar}</p>}
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md mt-4"
                 disabled={loading}
+                className="w-full bg-gradient-to-r from-pink-500 to-cyan-500 text-white font-semibold py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-500 transition duration-300"
               >
                 {loading ? (
                   <div className="flex justify-center items-center">
                     <SquareLoader color="#fff" size={16} />
                     <span className="ml-2">Submitting...</span>
                   </div>
-                ) : (
-                  'Sign up'
-                )}
+                ) : 'Sign up'}
               </button>
             </form>
 
             <ToastContainer position="top-right" autoClose={3000} hideProgressBar closeOnClick pauseOnHover draggable />
-            <p className="text-sm text-gray-600 mt-4">
+
+            <p className="text-sm text-gray-400 mt-4">
               Already have an account?{' '}
-              <Link to="/login" className="text-indigo-600 hover:underline">Sign in</Link>
+              <Link to="/auth/a2/login" className="text-pink-400 hover:underline">Sign in</Link>
             </p>
           </div>
         </div>

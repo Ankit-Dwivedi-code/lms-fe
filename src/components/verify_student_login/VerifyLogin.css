@@ -1,38 +1,87 @@
 /* VerifyLogin.css */
 
 body {
-    font-family: 'Arial', sans-serif;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #0f0f1b; /* Futuristic dark background */
+  color: #f1f1f1;
+}
+
+.bg-white {
+  background-color: #121829; /* Slightly lighter dark card background */
+  border: 1px solid #1f2a40;
+}
+
+.text-indigo-600 {
+  color: #00ffff; /* Neon cyan */
+}
+
+.text-indigo-700 {
+  color: #00ccff;
+}
+
+.rounded-lg {
+  border-radius: 12px;
+}
+
+.shadow-lg {
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+button:hover {
+  filter: brightness(1.1);
+  transform: scale(1.01);
+}
+
+/* Smooth hover for all buttons */
+button {
+  transition: all 0.3s ease;
+}
+
+/* Input glow effect */
+input:focus {
+  outline: none;
+  border-color: #00ffff;
+  box-shadow: 0 0 6px #00ffff88;
+  background-color: #1a2238;
+  color: #ffffff;
+}
+
+input {
+  background-color: #1a2238;
+  color: #ffffff;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Error text */
+.text-red-500 {
+  color: #ff5f5f;
+}
+
+/* Animation for wrong OTP */
+.shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+/* Link hover */
+a:hover,
+button:hover {
+  text-decoration: underline;
+}
+
+/* Neon text animation (optional if needed later) */
+@keyframes neon-glow {
+  0%, 100% {
+    text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 20px #00ffff;
   }
-  
-  .bg-white {
-    background-color: #ffffff;
+  50% {
+    text-shadow: 0 0 10px #00ccff, 0 0 20px #00ccff, 0 0 30px #00ccff;
   }
-  
-  .text-indigo-600 {
-    color: #5c6bc0;
-  }
-  
-  .text-indigo-700 {
-    color: #3949ab;
-  }
-  
-  .rounded-lg {
-    border-radius: 10px;
-  }
-  
-  .shadow-lg {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  .shake {
-    animation: shake 0.3s ease-in-out;
-  }
-  
-  @keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
-    100% { transform: translateX(0); }
-  }
-  
+}

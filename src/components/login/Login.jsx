@@ -1,43 +1,39 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link for routing
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SquareLoader } from 'react-spinners';
-import './Login.css' // Custom CSS for shake effect
-
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import axios from 'axios'; // Import axios
+import axios from 'axios';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import './Login.css'; // Shake effect
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [errors, setErrors] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({});
   const [shake, setShake] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+  }, []);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [id]: value,
-    }));
-    setErrors((prevErrors) => ({ ...prevErrors, [id]: '' }));
+    setFormData((prev) => ({ ...prev, [id]: value }));
+    setErrors((prev) => ({ ...prev, [id]: '' }));
   };
 
   const validateForm = () => {
-    let newErrors = {};
-    if (!formData.email) {
-      newErrors.email = 'Please enter your email';
-    }
-    if (!formData.password) {
-      newErrors.password = 'Please enter your password';
-    }
+    const newErrors = {};
+    if (!formData.email) newErrors.email = 'Email is required.';
+    if (!formData.password) newErrors.password = 'Password is required.';
     return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -47,26 +43,23 @@ const Login = () => {
     }
 
     setLoading(true);
-
     try {
-      // API call using axios
-      const response = await axios.post('http://localhost:8000/api/a2/students/login', formData, {
-        withCredentials: true, 
-      });
+      const res = await axios.post(
+        'http://localhost:8000/api/a2/students/login',
+        formData,
+        { withCredentials: true }
+      );
 
-      // console.log('API response:', response.data);
-
-      if (response.data.success && response.data.message.includes("OTP sent")) {
-        toast.info('Please verify yourself!'); // Show toast for verification needed
+      if (res.data.success && res.data.message.includes('OTP sent')) {
+        toast.info('Please verify your login with OTP!');
         navigate('/auth/a2/verifylogin', { state: { email: formData.email } });
-    } else {
-        toast.success('Successfully signed in!');
-        // console.log('Login successful:', response.data);
-    }
+      } else {
+        toast.success('Login successful!');
+        navigate('/dashboard'); // or wherever user should go
+      }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'An error occurred during login';
-      toast.error(errorMessage);
-      console.error('Login error:', error);
+      const msg = error.response?.data?.message || 'Something went wrong';
+      toast.error(msg);
     } finally {
       setLoading(false);
       setFormData({ email: '', password: '' });
@@ -74,70 +67,73 @@ const Login = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-[#F5F7FA]">
-      <ToastContainer /> {/* Toast container for notifications */}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0f1b] to-[#1a1a2e] text-white">
+      <ToastContainer />
+      <div
+        className={`w-full max-w-md p-8 rounded-xl shadow-lg border border-pink-500/20 bg-[#101020] ${shake ? 'shake' : ''}`}
+        data-aos="fade-up"
+      >
+        <h2 className="text-3xl font-extrabold text-center mb-6 text-cyan-400">
+          Sign In to NeuroNest
+        </h2>
 
-
-      <div className={`z-10 bg-white p-8 rounded-lg shadow-lg w-full max-w-md ${shake ? 'shake' : ''}`}>
-        <h1 className="text-2xl font-bold text-gray-800 text-center mb-6">Sign in to your account</h1>
-
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          {/* Email Field */}
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="block text-sm mb-1">
               Email
             </label>
             <input
-              type="email"
               id="email"
+              type="email"
               value={formData.email}
               onChange={handleInputChange}
-              className={`mt-1 block w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+              className={`w-full px-4 py-2 rounded-md bg-[#181828] border ${errors.email ? 'border-red-500' : 'border-cyan-400/30'} focus:outline-none focus:ring-2 focus:ring-pink-500`}
               placeholder="you@example.com"
             />
             {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email}</p>}
           </div>
 
-          {/* Password Field */}
+          {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="password" className="block text-sm mb-1">
               Password
             </label>
             <input
-              type="password"
               id="password"
+              type="password"
               value={formData.password}
               onChange={handleInputChange}
-              className={`mt-1 block w-full px-3 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+              className={`w-full px-4 py-2 rounded-md bg-[#181828] border ${errors.password ? 'border-red-500' : 'border-cyan-400/30'} focus:outline-none focus:ring-2 focus:ring-pink-500`}
               placeholder="Enter your password"
             />
             {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>}
           </div>
 
-          {/* Forgot Password Link */}
-          <div className="text-right">
-            <Link to="/auth/a2/forgotpassword" className="text-sm text-indigo-600 hover:underline">Forgot your password?</Link>
+          {/* Forgot password */}
+          <div className="text-right text-sm">
+            <Link to="/auth/a2/forgotpassword" className="text-cyan-400 hover:underline">
+              Forgot Password?
+            </Link>
           </div>
 
-          {/* Sign In Button with Spinner */}
-          <div>
-            <button
-              type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md bg-indigo-600 shadow-sm text-sm font-medium text-white  hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300"
-              disabled={loading}
-            >
-              {loading ? <SquareLoader color="#fff" size={20} /> : 'Sign in'}
-            </button>
-          </div>
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-pink-500 to-cyan-500 text-white py-2 rounded-md font-bold hover:from-pink-600 hover:to-purple-500 transition duration-300"
+          >
+            {loading ? <SquareLoader color="#fff" size={20} /> : 'Sign In'}
+          </button>
         </form>
 
-        <div className="mt-6 text-center">
-  <p className="text-sm text-gray-600">
-    New to A2 Pyramid?{' '}
-    <Link to="/auth/a2/signup" className="text-indigo-600 font-medium hover:underline">Create an account</Link>
-  </p>
-</div>
-
+        {/* Footer */}
+        <p className="mt-6 text-center text-sm text-gray-400">
+          New here?{' '}
+          <Link to="/signup/student" className="text-pink-400 hover:underline font-medium">
+            Create Account
+          </Link>
+        </p>
       </div>
     </div>
   );

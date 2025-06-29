@@ -5,11 +5,14 @@ import axios from "axios";
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [avatarKey, setAvatarKey] = useState(Date.now()); // force image refresh
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/a2/students/get-student", { withCredentials: true });
+        const response = await axios.get("http://localhost:8000/api/a2/students/get-student", {
+          withCredentials: true,
+        });
         setUser(response.data.data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -31,46 +34,70 @@ const Profile = () => {
       const response = await axios.patch(
         "http://localhost:8000/api/a2/students/update-avatar",
         formData,
-        { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
       setUser((prev) => ({ ...prev, avatar: response.data.avatar }));
+      setAvatarKey(Date.now()); // Force refresh by changing key
     } catch (error) {
       console.error("Error updating avatar:", error);
     }
   };
 
-  if (loading) return <div className="text-center py-10 text-lg font-semibold">Loading...</div>;
-  if (!user) return <div className="text-center py-10 text-lg font-semibold">User not found</div>;
+  if (loading)
+    return <div className="text-center py-10 text-lg font-semibold text-cyan-500">Loading...</div>;
+  if (!user)
+    return <div className="text-center py-10 text-lg font-semibold text-red-500">User not found</div>;
 
   return (
-    <div className="max-w-5xl mx-auto mt-12 p-8 bg-white shadow-lg rounded-xl border border-gray-200">
-      <h2 className="text-3xl font-bold mb-8 text-gray-800 text-center">Profile</h2>
-      <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-        {/* Avatar Section */}
-        <div className="relative w-32 h-32 md:w-40 md:h-40">
-          <img src={user.avatar || "/default-avatar.png"} alt="Avatar" className="w-full h-full rounded-full border-4 border-gray-300 shadow-lg" />
-          <label className="absolute bottom-2 right-2 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 shadow-md">
-            <FaEdit className="text-lg" />
-            <input type="file" className="hidden" accept="image/*" onChange={handleAvatarChange} />
-          </label>
-        </div>
+    <div className="max-w-4xl mx-auto mt-14 p-6 sm:p-10 bg-gradient-to-br from-[#1a1a2e] to-[#0f0f1b] text-white rounded-xl shadow-2xl border border-pink-600/10">
+      <h2 className="text-3xl font-extrabold text-center mb-10 text-cyan-400">👤 My Profile</h2>
 
-        {/* Info Section */}
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-10">
+        {/* Avatar */}
+        <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-cyan-400 shadow-xl group cursor-pointer">
+  <label className="absolute inset-0 w-full h-full">
+    <img
+      key={avatarKey}
+      src={user.avatar ? `${user.avatar}?t=${avatarKey}` : "/default-avatar.png"}
+      alt="Avatar"
+      className="w-full h-full object-cover"
+    />
+    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+      <FaEdit className="text-white text-3xl cursor-pointer bg-cyan-600 p-2 rounded-full shadow-md hover:bg-pink-500 transition" />
+    </div>
+    <input
+      type="file"
+      className="hidden"
+      accept="image/*"
+      onChange={handleAvatarChange}
+    />
+  </label>
+</div>
+
+
+        {/* Info */}
         <div className="flex-1 space-y-4">
-          <div className="bg-gray-100 p-4 rounded-md shadow-sm">
-            <h3 className="text-xl font-semibold text-gray-700">{user.username}</h3>
-            <p className="text-gray-600">📧 {user.email}</p>
-            <p className="text-gray-600">📞 {user.phone}</p>
+          <div className="bg-white/5 p-4 rounded-lg border border-cyan-500/20 shadow-md">
+            <h3 className="text-xl font-bold text-pink-400">{user.username}</h3>
+            <p className="text-sm text-gray-300">📧 {user.email}</p>
+            <p className="text-sm text-gray-300">📞 {user.phone}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gray-100 p-4 rounded-md shadow-sm">
-              <p className="text-gray-700 font-semibold">Highest Qualification</p>
-              <p className="text-gray-600">{user.highestQualification || "Not provided"}</p>
+            <div className="bg-white/5 p-4 rounded-lg border border-cyan-500/20 shadow-md">
+              <p className="text-cyan-300 font-semibold mb-1">🎓 Highest Qualification</p>
+              <p className="text-gray-200 text-sm">{user.highestQualification || "Not provided"}</p>
             </div>
-            <div className="bg-gray-100 p-4 rounded-md shadow-sm">
-              <p className="text-gray-700 font-semibold">Date of Birth</p>
-              <p className="text-gray-600">{new Date(user.dateOfBirth).toLocaleDateString()}</p>
+            <div className="bg-white/5 p-4 rounded-lg border border-cyan-500/20 shadow-md">
+              <p className="text-cyan-300 font-semibold mb-1">🎂 Date of Birth</p>
+              <p className="text-gray-200 text-sm">
+                {user.dateOfBirth
+                  ? new Date(user.dateOfBirth).toLocaleDateString()
+                  : "Not provided"}
+              </p>
             </div>
           </div>
         </div>

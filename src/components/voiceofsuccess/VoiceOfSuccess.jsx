@@ -1,87 +1,81 @@
 import React, { useEffect } from 'react';
-import './VoiceOfSuccess.css'; // Import for custom styles
 
 const VoiceOfSuccess = () => {
   const testimonials = [
     {
       name: 'Rahul Sharma',
       role: 'Full-Stack Developer',
-      feedback: 'The courses provided helped me to quickly master the technologies needed to build complex applications. I owe my success to these detailed lessons!',
+      feedback: 'The courses helped me master technologies quickly. These detailed lessons played a major role in my journey!',
     },
     {
       name: 'Ayush Patel',
       role: 'Data Scientist',
-      feedback: 'I found the data science and AI courses extremely helpful. The practical projects truly helped me land my current role!',
+      feedback: 'The data science and AI projects were practical and helped me crack my dream job!',
     },
     {
       name: 'Ankit',
       role: 'Web Developer',
-      feedback: 'The web development course was easy to follow and helped me become proficient in building responsive websites.',
+      feedback: 'The course flow was smooth and helped me become confident in responsive design and deployment.',
     },
     {
-      name: 'Riya jha',
-      role: 'Machine Learning Engineer',
-      feedback: 'The ML course opened many doors for me in the industry, with strong theoretical and practical concepts.',
+      name: 'Riya Jha',
+      role: 'ML Engineer',
+      feedback: 'NeuroNest’s ML training opened career opportunities with both theory and real projects.',
     },
     {
       name: 'Amit Verma',
       role: 'Software Engineer',
-      feedback: 'I was able to enhance my coding skills and got placed in a reputed company. Great platform for learning!',
+      feedback: 'I upgraded my coding skills, cracked interviews, and landed at a reputed tech firm!',
     },
     {
       name: 'Roshni Agarwal',
       role: 'UI/UX Designer',
-      feedback: 'The design courses gave me in-depth knowledge of UI/UX principles and boosted my confidence as a designer.',
+      feedback: 'The design system and principles taught here gave me confidence as a designer.',
     },
   ];
 
-  // Duplicate testimonials for continuous scrolling
-  const loopTestimonials = [...testimonials, ...testimonials, ...testimonials,  ...testimonials,  ...testimonials,  ...testimonials,  ...testimonials];
+  const loopTestimonials = [...testimonials, ...testimonials, ...testimonials];
 
-  // Auto-scroll effect
   useEffect(() => {
-    const cardsContainer = document.getElementById('testimonialCards');
-    let scrollInterval = setInterval(() => {
-      cardsContainer.scrollLeft += 2;
-      if (cardsContainer.scrollLeft >= cardsContainer.scrollWidth / 3) {
-        cardsContainer.scrollLeft = 0; // Reset scroll when it reaches the third duplication
+    const container = document.getElementById('testimonialCards');
+    let interval = setInterval(() => {
+      container.scrollLeft += 1.5;
+      if (container.scrollLeft >= container.scrollWidth / 3) {
+        container.scrollLeft = 0;
       }
-    }, 20);
+    }, 16);
 
-    // Stop scrolling on hover
-    cardsContainer.addEventListener('mouseenter', () => clearInterval(scrollInterval));
-    cardsContainer.addEventListener('mouseleave', () => {
-      scrollInterval = setInterval(() => {
-        cardsContainer.scrollLeft += 2;
-      }, 20);
+    container.addEventListener('mouseenter', () => clearInterval(interval));
+    container.addEventListener('mouseleave', () => {
+      interval = setInterval(() => {
+        container.scrollLeft += 1.5;
+      }, 16);
     });
 
-    return () => clearInterval(scrollInterval);
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="bg-indigo-50 py-10">
-      <div className="container mx-auto px-5 lg:px-20 relative">
-        
-        {/* Section Heading */}
-        <h2 className="text-3xl font-semibold text-center text-gray-800 mb-8">
-          Voices of Success: Our Student's Journey
+    <section className="bg-[#0f0f1b] py-16">
+      <div className="container mx-auto px-6 lg:px-20">
+        {/* Heading */}
+        <h2 className="text-3xl md:text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 mb-10 tracking-tight">
+          Voices of Success: Our Students’ Journey
         </h2>
 
-        
-        <div 
+        {/* Card Scroller */}
+        <div
           id="testimonialCards"
-          className="flex overflow-x-auto space-x-4 scroll-smooth testimonial-scroll relative"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} // Hides scrollbar
+          className="flex overflow-x-auto space-x-6 scroll-smooth no-scrollbar"
         >
-          {loopTestimonials.map((testimonial, index) => (
+          {loopTestimonials.map((t, i) => (
             <div
-              key={index}
-              className="min-w-[300px] max-w-xs flex-shrink-0 bg-white p-6 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
+              key={i}
+              className="min-w-[280px] max-w-xs flex-shrink-0 bg-[#1a1a2e]/60 backdrop-blur-md border border-cyan-400/20 hover:border-pink-500/40 rounded-xl p-6 shadow-lg hover:shadow-pink-500/20 transition-all duration-300"
             >
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{testimonial.name}</h3>
-              <p className="text-sm text-blue-600 mb-1">{testimonial.role}</p>
-              <p className="text-gray-600 text-sm">{testimonial.feedback}</p>
+              <h3 className="text-xl font-bold text-cyan-300 mb-2">{t.name}</h3>
+              <p className="text-sm text-pink-400 mb-1 italic">{t.role}</p>
+              <p className="text-sm text-gray-200">{t.feedback}</p>
             </div>
           ))}
         </div>

@@ -1,47 +1,61 @@
 /* JoinNow.css */
 
-.flex {
-    display: flex;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* Section animation */
+section {
+  animation: fadeInUp 0.8s ease both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
   }
-  
-  .items-center {
-    align-items: center;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .justify-center {
-    justify-content: center;
-  }
-  
-  .container {
-    max-width: 1200px; /* Adjust as needed */
-    margin: 0 auto;
-  }
-  
-  .bg-indigo-50 {
-    background-color: #f3f4f6; /* Light indigo background */
-  }
-  
-  .rounded-lg {
-    border-radius: 0.5rem;
-  }
-  
-  .shadow-lg {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  }
-  
-  .text-gray-600 {
-    color: #4b5563; /* Darker gray text */
-  }
-  
-  .text-gray-800 {
-    color: #1f2937; /* Dark gray text */
-  }
-  
-  .hover\:bg-indigo-500:hover {
-    background-color: #4c51bf; /* Darker indigo on hover */
-  }
-  
-  .transition {
-    transition: background-color 0.3s ease;
-  }
-  
+}
+
+/* Image styling */
+.shadow-glow {
+  box-shadow: 0 0 20px rgba(199, 21, 133, 0.4), 0 0 40px rgba(138, 43, 226, 0.2);
+  border-radius: 1rem;
+}
+
+/* Gradient CTA Button */
+.gradient-button {
+  background-image: linear-gradient(to right, #ec4899, #8b5cf6, #06b6d4);
+  color: white;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: inline-block;
+}
+
+.gradient-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.6), 0 0 18px rgba(6, 182, 212, 0.5);
+}
+
+/* Text enhancements */
+.hero-heading {
+  font-size: 2.5rem;
+  line-height: 1.2;
+  font-weight: 800;
+  background: linear-gradient(to right, #ec4899, #8b5cf6, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtext {
+  color: #cbd5e1; /* slate-300 */
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+}

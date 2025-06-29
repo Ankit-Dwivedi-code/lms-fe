@@ -1,35 +1,63 @@
-/* Default styles (applies to all devices) */
+/* Base background for hero section */
+section {
+  background-color: #0f0f1b;
+}
+
+/* Headline */
 h1 {
-    font-size: 1.6rem;
-    line-height: 1.6rem;
-  }
-  
-  p {
-    font-size: 1.2rem;
-    line-height: 1.5rem;
+  font-size: 1.6rem;
+  line-height: 1.6rem;
+  color: #ffffff;
+  text-shadow: 0 0 8px #8e44ad;
+}
+
+/* Paragraph */
+p {
+  font-size: 1.2rem;
+  line-height: 1.5rem;
+  color: #cccccc;
+}
+
+/* Typewriter text animation (neon look) */
+.typewriter-text {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #e91e63;
+  text-shadow: 0 0 6px #e91e63, 0 0 10px #ff4081;
+}
+
+/* Neon button style */
+/* button {
+  background: linear-gradient(90deg, #7f00ff, #e100ff);
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 12px #e100ff;
+}
+
+button:hover {
+  background: linear-gradient(90deg, #00c9ff, #92fe9d);
+  box-shadow: 0 0 20px #00c9ff, 0 0 30px #92fe9d;
+} */
+
+/* Responsive styles for phone devices */
+@media (max-width: 640px) {
+  h1 {
+    font-size: 1.8rem;
+    line-height: 1.8rem;
   }
 
-  .typewriter-text {
-    font-weight: 700; /* Equivalent to font-bold */
-    font-size: 1.25rem; /* Equivalent to text-xl */
-    color: #4F46E5; /* Equivalent to text-indigo-600 */
+  p {
+    font-size: 1.4rem;
+    line-height: 1.6rem;
   }
-  
-  
-  /* Media query for phone devices (screen width < 640px) */
-  @media (max-width: 640px) {
-    h1 {
-      font-size: 1.8rem; /* Slightly larger font size */
-      line-height: 1.8rem; /* Increased line height for readability */
-    }
-  
-    p {
-      font-size: 1.4rem; /* Slightly larger font size */
-      line-height: 1.6rem; /* Increased line height for readability */
-    }
-  
-    button {
-      font-size: 1.2rem; /* Slightly larger button text */
-    }
+
+  button {
+    font-size: 1.2rem;
+    padding: 10px 20px;
   }
-  
+}

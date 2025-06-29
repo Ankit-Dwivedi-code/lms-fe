@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/header/Header.jsx';
+// import Header from './components/header/Header.jsx';
 import HeroSection from './components/herosection/HeroSection.jsx';
 import CollaborationSection from './components/collaboration/CollaborationSection.jsx';
 import FeaturedCourses from './components/feature_courses/FeaturedCourses.jsx';
@@ -57,6 +57,7 @@ import QASyllabus from './components/curriculum_info/qACurriculum.jsx';
 
 //Student profile
 import Profile from './components/profile/Profile.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 
 function App() {
@@ -166,7 +167,7 @@ function App() {
           path="/" 
           element={
             <>
-              <Header />
+              {/* <Header /> */}
               <Navbar />
               <HeroSection />
               <FloatingContactButton />
@@ -253,9 +254,11 @@ function App() {
         {/* profile page */}
 
 <Route path='/profile' element={<>
+        <ProtectedRoute >
         <Navbar />
         <Profile />
         <Footer />
+        </ProtectedRoute>
         </>} />
 
         {/* Error Page  */}

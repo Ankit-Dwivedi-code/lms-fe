@@ -1,30 +1,33 @@
 import React from 'react';
-import './JoinNow.css'; // Import for custom styles
+import './JoinNow.css'; // Custom styles
 import { Link } from 'react-router-dom';
-
 
 const JoinNow = () => {
   return (
-    <section className="flex items-center justify-center bg-indigo-50 py-10">
-      <div className="container mx-auto flex flex-col lg:flex-row items-center px-5 lg:px-20">
-        {/* Left Side Image */}
+    <section className="bg-[#0f0f1b] py-16 px-5">
+      <div className="container mx-auto flex flex-col lg:flex-row items-center gap-10 lg:px-20">
+        
+        {/* Image Section */}
         <div className="flex-1">
           <img 
-            src="/img/last_img.png" // Replace with your image URL
-            alt="Join A2 Pyramid"
-            className="w-full h-auto rounded-lg shadow-lg"
+            src="/img/hero5.png"
+            alt="Join NeuroNest"
+            className="w-full h-auto rounded-2xl shadow-[0_0_20px_rgba(199,21,133,0.4)]"
           />
         </div>
-        
-        {/* Text and Button Section */}
-        <div className="flex-1 text-center lg:text-left mt-6 lg:mt-0 lg:pl-10">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">
-            Take the Next Step Toward Your Professional Goals with A2 Pyramid
+
+        {/* Text Section */}
+        <div className="flex-1 text-center lg:text-left">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-6">
+            Step Into the Future with <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400">NeuroNest</span>
           </h2>
-          <p className="text-gray-600 mb-6">
-            Join now to receive personalized recommendations from the full A2 Pyramid catalog.
+          <p className="text-gray-300 text-lg mb-8">
+            Elevate your career with cutting-edge skills in AI, Web, Data, and DevOps. Join the league of innovators shaping tomorrow.
           </p>
-          <Link to="/auth/a2/signup" className="bg-indigo-600 mt-16 text-white px-6 py-3 rounded-lg hover:bg-indigo-500 transition duration-300">
+          <Link
+            to="/auth/a2/signup"
+            className="inline-block px-8 py-3 text-white font-semibold rounded-full bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-400 hover:opacity-90 transition duration-300"
+          >
             Join for Free
           </Link>
         </div>
