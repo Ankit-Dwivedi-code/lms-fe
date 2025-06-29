@@ -26,7 +26,7 @@ const ChatBot = () => {
       setIsTyping(true);
 
       try {
-        const response = await axios.post('http://localhost:8000/api/a2/ai-response/chat', { message: input });
+        const response = await axios.post('https://neuronest-be-production.up.railway.app/api/a2/ai-response/chat', { message: input });
         const botResponse = response.data?.data?.response || "Hmm... I didn’t get that!";
         setChatLog((prev) => [...prev, { sender: 'bot', message: `🤖: ${botResponse}` }]);
       } catch (err) {
