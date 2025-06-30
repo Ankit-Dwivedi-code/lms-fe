@@ -58,7 +58,7 @@ const VerifyLogin = () => {
 
   const handleResendOtp = async () => {
     try {
-      await axios.post('http://localhost:8000/api/a2/students/resend-otp', { email });
+      await axios.post('https://neuronest-be-production.up.railway.app/api/a2/students/resend-otp', { email });
       toast.success('OTP resent successfully');
     } catch (err) {
       toast.error('Failed to resend OTP');
