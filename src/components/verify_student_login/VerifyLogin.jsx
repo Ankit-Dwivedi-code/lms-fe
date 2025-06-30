@@ -24,37 +24,36 @@ const VerifyLogin = () => {
   }, [email, navigate]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
+  e.preventDefault();
+  setError('');
 
-    if (!/^\d{6}$/.test(otp)) {
-      setError('OTP must be a 6-digit number');
-      return;
-    }
+  if (!/^\d{6}$/.test(otp)) {
+    setError('OTP must be a 6-digit number');
+    return;
+  }
 
-    setLoading(true);
-    try {
-      const response = await axios.post('https://neuronest-be-production.up.railway.app/api/a2/students/verify-login', {
-        email,
-        otp,
-      });
+  setLoading(true);
+  try {
+    const response = await axios.post(
+      'https://neuronest-be-production.up.railway.app/api/a2/students/verify-login',
+      { email, otp },
+      { withCredentials: true } // 👈 Important for cookie to be saved
+    );
 
-      Cookies.set('accessToken', response.data.data.accessToken, { expires: 1 });
-      Cookies.set('refreshToken', response.data.data.refreshToken, { expires: 15 });
+    toast.success('Login verified successfully!');
+    setTimeout(() => {
+      navigate('/');
+    }, 1500);
+  } catch (err) {
+    const errorMessage = err.response?.data?.message || 'OTP verification failed';
+    setError(errorMessage);
+    toast.error(errorMessage);
+  } finally {
+    setLoading(false);
+    setOtp('');
+  }
+};
 
-      toast.success('Login verified successfully!');
-      setTimeout(() => {
-        navigate('/');
-      }, 1500);
-    } catch (err) {
-      const errorMessage = err.response?.data?.message || 'OTP verification failed';
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-      setOtp('');
-    }
-  };
 
   const handleResendOtp = async () => {
     try {
