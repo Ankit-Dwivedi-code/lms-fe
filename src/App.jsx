@@ -58,6 +58,7 @@ import QASyllabus from './components/curriculum_info/qACurriculum.jsx';
 //Student profile
 import Profile from './components/profile/Profile.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import CourseDetail from './components/enrollCourses/Mern.jsx';
 
 
 function App() {
@@ -102,11 +103,11 @@ function App() {
         </>} />
 
         {/*student profile route */}
-        <Route path="/auth/a2/profile" element={<>
+        {/* <Route path="/auth/a2/profile" element={<>
         <Navbar />
         <StudentProfile />
         <Footer />
-        </>} />
+        </>} /> */}
 
         {/* verify signup  */}
         <Route path="/auth/a2/verify-signup" element={<>
@@ -186,11 +187,13 @@ function App() {
         />
 
         {/* Enroll Courses  */}
-        <Route path='/course-Mern' element={<>
+        <Route path='/courses/:courseId' element={<>
+        <ProtectedRoute>
         <Navbar />
-        <Mern />
+        <CourseDetail />
         {/* <Specialization /> */}
         <Footer />
+        </ProtectedRoute>
         </>} />
 
         <Route path='/course-DataAnalytics' element={<>

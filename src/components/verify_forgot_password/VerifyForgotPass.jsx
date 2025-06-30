@@ -15,7 +15,7 @@ const VerifyForgotPass = () => {
   useEffect(() => {
     if (!email) {
       toast.error('Invalid access. Email is required.');
-      navigate('/auth/a2/forgotpassword'); // Redirect back if email is not available
+      navigate('/auth/a2/forgotpassword');
     }
   }, [email, navigate]);
 
@@ -25,11 +25,8 @@ const VerifyForgotPass = () => {
   };
 
   const validateOtp = () => {
-    if (!otp) {
-      return 'Please enter the OTP';
-    } else if (!/^\d{6}$/.test(otp)) {
-      return 'OTP must be a 6-digit number';
-    }
+    if (!otp) return 'Please enter the OTP';
+    if (!/^\d{6}$/.test(otp)) return 'OTP must be a 6-digit number';
     return '';
   };
 
@@ -42,13 +39,10 @@ const VerifyForgotPass = () => {
     }
 
     setLoading(true);
-
     try {
-      const response = await fetch('http://localhost:8000/api/a2/students/verify-resetpassotp', {
+      const response = await fetch('https://neuronest-be-production.up.railway.app/api/a2/students/verify-resetpassotp', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp }),
       });
 
@@ -68,35 +62,34 @@ const VerifyForgotPass = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F5F7FA]">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0f1b] via-[#1a1a2e] to-[#0f0f1b] px-4">
       <ToastContainer />
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-800 text-center mb-6">Verify OTP</h1>
-        <p className="text-gray-600 text-center mb-4">
-          Enter the OTP sent to <strong>{email}</strong> to verify and reset your password.
+      <div className="bg-[#151522] text-white p-8 rounded-2xl shadow-2xl w-full max-w-md animate-fadeIn">
+        <h1 className="text-3xl font-extrabold text-cyan-400 text-center mb-4">Verify OTP</h1>
+        <p className="text-center text-gray-400 mb-6">
+          Enter the OTP sent to <span className="text-pink-400 font-medium">{email}</span> to reset your password.
         </p>
 
-        <form onSubmit={handleVerifyOTP} className="space-y-6">
+        <form onSubmit={handleVerifyOTP} className="space-y-5">
           <div>
-            <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
-              OTP
-            </label>
+            <label htmlFor="otp" className="block text-sm text-gray-300 mb-1">OTP</label>
             <input
               type="text"
               id="otp"
               value={otp}
               onChange={handleInputChange}
-              className={`mt-1 block w-full px-3 py-2 border ${errors ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
               placeholder="Enter 6-digit OTP"
+              maxLength={6}
+              className={`w-full px-4 py-2 bg-gray-800 text-white rounded-md border ${errors ? 'border-red-500' : 'border-gray-600'} focus:outline-none focus:ring-2 focus:ring-pink-500`}
             />
-            {errors && <p className="text-sm text-red-500 mt-1">{errors}</p>}
+            {errors && <p className="text-sm text-red-500 mt-1 animate-shake">{errors}</p>}
           </div>
 
           <div>
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300"
               disabled={loading}
+              className="w-full py-2 px-4 bg-gradient-to-r from-pink-500 to-cyan-500 text-white font-semibold rounded-full hover:opacity-90 transition-all duration-300"
             >
               {loading ? <SquareLoader color="#fff" size={20} /> : 'Verify OTP'}
             </button>

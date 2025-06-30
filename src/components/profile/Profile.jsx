@@ -10,7 +10,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/a2/students/get-student", {
+        const response = await axios.get("https://neuronest-be-production.up.railway.app/api/a2/students/get-student", {
           withCredentials: true,
         });
         setUser(response.data.data);
@@ -32,7 +32,7 @@ const Profile = () => {
 
     try {
       const response = await axios.patch(
-        "http://localhost:8000/api/a2/students/update-avatar",
+        "https://neuronest-be-production.up.railway.app/api/a2/students/update-avatar",
         formData,
         {
           withCredentials: true,

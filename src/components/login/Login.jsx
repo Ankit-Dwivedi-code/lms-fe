@@ -6,13 +6,15 @@ import { SquareLoader } from 'react-spinners';
 import axios from 'axios';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import './Login.css'; // Shake effect
+import './Login.css'; // shake animation
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [shake, setShake] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,10 +57,10 @@ const Login = () => {
         navigate('/auth/a2/verifylogin', { state: { email: formData.email } });
       } else {
         toast.success('Login successful!');
-        navigate('/dashboard'); // or wherever user should go
+        navigate('/dashboard');
       }
     } catch (error) {
-      const msg = error.response?.data?.message || 'Something went wrong';
+      const msg = error.response?.data?.message || 'Invalid Credentials. Please try again.';
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -95,18 +97,24 @@ const Login = () => {
           </div>
 
           {/* Password */}
-          <div>
+          <div className="relative">
             <label htmlFor="password" className="block text-sm mb-1">
               Password
             </label>
             <input
               id="password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               value={formData.password}
               onChange={handleInputChange}
               className={`w-full px-4 py-2 rounded-md bg-[#181828] border ${errors.password ? 'border-red-500' : 'border-cyan-400/30'} focus:outline-none focus:ring-2 focus:ring-pink-500`}
               placeholder="Enter your password"
             />
+            <div
+              className="absolute right-3 top-[38px] cursor-pointer text-gray-400 hover:text-pink-400"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </div>
             {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>}
           </div>
 

@@ -14,7 +14,7 @@ const About = () => {
     // Check if user is logged in
     const fetchUser = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/a2/students/get-student", {
+        const res = await axios.get("https://neuronest-be-production.up.railway.app/api/a2/students/get-student", {
           withCredentials: true,
         });
         setUser(res.data?.data);

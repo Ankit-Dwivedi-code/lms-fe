@@ -1,54 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { SquareLoader } from 'react-spinners';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ResetPassword = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const email = location.state?.email;
 
   useEffect(() => {
     if (!email) {
       toast.error('Invalid access. Email is required.');
-      navigate('/auth/a2/forgotpassword'); // Redirect back if email is not available
+      navigate('/auth/a2/forgotpassword');
     }
   }, [email, navigate]);
 
-  const handleInputChange = (e) => {
-    setNewPassword(e.target.value);
-    setErrors('');
-  };
-
-  const validatePassword = () => {
-    if (!newPassword) {
-      return 'Please enter your new password';
-    } else if (newPassword.length < 6) {
-      return 'Password must be at least 6 characters long';
-    }
+  const validateForm = () => {
+    if (!newPassword || !confirmPassword) return 'Please fill in both password fields';
+    if (newPassword.length < 6) return 'Password must be at least 6 characters';
+    if (newPassword !== confirmPassword) return 'Passwords do not match';
     return '';
   };
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
-    const error = validatePassword();
+    const error = validateForm();
     if (error) {
       setErrors(error);
       return;
     }
 
     setLoading(true);
-
     try {
-      const response = await fetch('http://localhost:8000/api/a2/students/reset-password', {
+      const response = await fetch('https://neuronest-be-production.up.railway.app/api/a2/students/reset-password', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, newPassword }),
       });
 
@@ -56,10 +50,10 @@ const ResetPassword = () => {
       setLoading(false);
 
       if (response.ok) {
-        toast.success('Password reset successfully! You can now log in with your new password.');
+        toast.success('Password reset successfully! Please login.');
         navigate('/auth/a2/login');
       } else {
-        toast.error(data.message || 'Failed to reset password. Please try again.');
+        toast.error(data.message || 'Failed to reset password.');
       }
     } catch (error) {
       setLoading(false);
@@ -68,35 +62,76 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F5F7FA]">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0f1b] via-[#1a1a2e] to-[#0f0f1b] px-4">
       <ToastContainer />
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-800 text-center mb-6">Reset Password</h1>
-        <p className="text-gray-600 text-center mb-4">
-          Enter your new password to reset your account password.
+      <div className="bg-[#151522] text-white p-8 rounded-2xl shadow-2xl w-full max-w-md animate-fadeIn">
+        <h1 className="text-3xl font-extrabold text-cyan-400 text-center mb-4">Reset Password</h1>
+        <p className="text-center text-gray-400 mb-6">
+          Enter your new password to reset your account.
         </p>
 
-        <form onSubmit={handleResetPassword} className="space-y-6">
-          <div>
-            <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
+        <form onSubmit={handleResetPassword} className="space-y-5">
+          {/* New Password */}
+          <div className="relative">
+            <label htmlFor="newPassword" className="block text-sm text-gray-300 mb-1">
               New Password
             </label>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               id="newPassword"
               value={newPassword}
-              onChange={handleInputChange}
-              className={`mt-1 block w-full px-3 py-2 border ${errors ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
-              placeholder="Enter your new password"
+              onChange={(e) => {
+                setNewPassword(e.target.value);
+                setErrors('');
+              }}
+              className={`w-full px-4 py-2 bg-gray-800 text-white rounded-md border ${
+                errors ? 'border-red-500' : 'border-gray-600'
+              } focus:outline-none focus:ring-2 focus:ring-pink-500`}
+              placeholder="Enter new password"
             />
-            {errors && <p className="text-sm text-red-500 mt-1">{errors}</p>}
+            <div
+              className="absolute top-9 right-3 cursor-pointer text-gray-400"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </div>
           </div>
 
+          {/* Confirm Password */}
+          <div className="relative">
+            <label htmlFor="confirmPassword" className="block text-sm text-gray-300 mb-1">
+              Confirm Password
+            </label>
+            <input
+              type={showConfirm ? 'text' : 'password'}
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setErrors('');
+              }}
+              className={`w-full px-4 py-2 bg-gray-800 text-white rounded-md border ${
+                errors ? 'border-red-500' : 'border-gray-600'
+              } focus:outline-none focus:ring-2 focus:ring-pink-500`}
+              placeholder="Re-enter new password"
+            />
+            <div
+              className="absolute top-9 right-3 cursor-pointer text-gray-400"
+              onClick={() => setShowConfirm(!showConfirm)}
+            >
+              {showConfirm ? <FaEyeSlash /> : <FaEye />}
+            </div>
+          </div>
+
+          {/* Error */}
+          {errors && <p className="text-sm text-red-500 animate-shake">{errors}</p>}
+
+          {/* Submit */}
           <div>
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300"
               disabled={loading}
+              className="w-full py-2 px-4 bg-gradient-to-r from-pink-500 to-cyan-500 text-white font-semibold rounded-full hover:opacity-90 transition-all duration-300"
             >
               {loading ? <SquareLoader color="#fff" size={20} /> : 'Reset Password'}
             </button>

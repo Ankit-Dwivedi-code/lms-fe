@@ -58,7 +58,7 @@ const Signup = () => {
           data.append(key, formData[key]);
         });
 
-        const response = await axios.post('http://localhost:8000/api/a2/students/register', data, {
+        const response = await axios.post('https://neuronest-be-production.up.railway.app/api/a2/students/register', data, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }

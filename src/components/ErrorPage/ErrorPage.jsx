@@ -1,30 +1,37 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ErrorPage = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      navigate('/');
+    }, 5000);
+
+    return () => clearTimeout(timeout);
+  }, [navigate]);
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white text-gray-800">
-      {/* Error Image */}
-      <img
-        className="mt-8 w-64 lg:w-80"
-        src="https://img.freepik.com/free-vector/oops-404-error-with-broken-robot-concept-illustration_114360-5529.jpg?w=2000"
-        alt="error-img"
-      />
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f0f1b] text-white px-4 text-center animate-fade-in">
+      <h1 className="text-5xl font-extrabold bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent mb-4">
+        404 - Page Not Found
+      </h1>
 
-      {/* Error Heading */}
-      <h1 className="mt-8 text-4xl font-bold text-green-600">Page not found</h1>
-
-      {/* Error Description */}
-      <p className="mt-4 text-lg text-gray-700">
-        The page you are requesting does not exist.
+      <p className="text-lg text-gray-300 mb-6">
+        Oops! The page you're looking for doesn’t exist or has been moved.
       </p>
 
-      {/* Back to Home Button */}
-      <Link to="/">
-        <button className="mt-8 px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-300">
-          Go to HomePage
-        </button>
+      <Link
+        to="/"
+        className="inline-block px-6 py-3 rounded-full text-white font-semibold bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-400 hover:opacity-90 transition duration-300"
+      >
+        Go to Homepage
       </Link>
+
+      <p className="mt-4 text-sm text-gray-500 animate-pulse">
+        Redirecting to homepage in 5 seconds...
+      </p>
     </div>
   );
 };

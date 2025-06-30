@@ -3,27 +3,9 @@ import './MeetOurInstructors.css';
 
 const instructors = [
   {
-    name: 'Mr. Arjun Verma',
-    role: 'Lead Data Scientist',
-    image: '/img/men.png',
-    bio: 'Arjun specializes in advanced machine learning models and statistical analytics. He mentors students through hands-on, project-based learning.',
-  },
-  {
-    name: 'Ms. Nidhi Iyer',
-    role: 'UI/UX Architect',
-    image: '/img/women.png',
-    bio: 'Nidhi transforms ideas into elegant interfaces. Her sessions blend design theory with Figma and prototyping best practices.',
-  },
-  {
-    name: 'Mr. Raghav Patel',
-    role: 'AI & ML Engineer',
-    image: '/img/men.png',
-    bio: 'Raghav trains students in AI pipelines, NLP, and deep learning using TensorFlow and PyTorch with real-world datasets.',
-  },
-  {
     name: 'Ankit Dwivedi',
     role: 'Full-Stack Developer',
-    image: '/img/ankit.jpg',
+    image: '/img/men.png',
     bio: 'Ankit is a versatile full-stack developer skilled in React, Node.js, MongoDB, and building scalable web apps from scratch.',
   },
 ];

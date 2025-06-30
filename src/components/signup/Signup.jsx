@@ -18,7 +18,7 @@ const SignupPage = () => {
           </p>
           <Link
             to="/signup/student"
-            className="mt-6 inline-block bg-gradient-to-r from-pink-500 to-cyan-500 px-8 py-3 rounded-full font-semibold text-white hover:from-pink-600 hover:to-purple-500 transition mt-8"
+            className=" inline-block bg-gradient-to-r from-pink-500 to-cyan-500 px-8 py-3 rounded-full font-semibold text-white hover:from-pink-600 hover:to-purple-500 transition mt-8"
           >
             Start Your Journey 🚀
           </Link>
@@ -58,7 +58,7 @@ const SignupPage = () => {
       </div>
 
       {/* Bottom Fixed Admin/Trainer Links */}
-      <div className="absolute bottom-6 right-6 text-right text-sm text-gray-400 space-y-1">
+      <div className="absolute bottom-1 right-2 text-right text-sm text-gray-400 space-y-1">
         <p className="text-xs">For internal roles:</p>
         <Link to="/signup/trainer" className="hover:text-cyan-400 underline">Trainer Signup</Link><br />
         <Link to="/signup/admin" className="hover:text-pink-400 underline">Admin Signup</Link>
