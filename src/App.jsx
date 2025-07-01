@@ -59,6 +59,17 @@ import QASyllabus from './components/curriculum_info/qACurriculum.jsx';
 import Profile from './components/profile/Profile.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import CourseDetail from './components/enrollCourses/Mern.jsx';
+import TrainerSignup from './components/trainer_signup/TrainerSignup.jsx';
+import TrainerVerify from './components/trainer_signup_verify/TrainerVerify.jsx';
+import TrainerLogin from './components/trainer_login/TrainerLogin.jsx';
+import TrainerLoginVerify from './components/trainer_login_verify/TrainerLoginVerify.jsx';
+import TrainerProtectedRoute from './TrainerProtectedRoute.jsx';
+import TrainerNavbar from './components/trainer_navbar/TrainerNavbar.jsx';
+import TrainerDashboard from './components/trainer_dashboard/TrainerDashboard.jsx';
+import CreateCourse from './components/trainer_create_course/CreateCourse.jsx';
+import CourseDetailsPage from './components/trainer_course_page/CourseDetailsPage.jsx';
+import CourseVideosPage from './components/trainer_course_video/CourseVideosPage.jsx';
+import EnrolledStudentsPage from './components/trainer_course_students/EnrolledStudentsPage.jsx';
 
 
 function App() {
@@ -218,6 +229,62 @@ function App() {
         <Navbar />
         <QA />
         <Footer />
+        </>} />
+
+        {/* Trainer */}
+        <Route path='/signup/trainer' element={<>
+        <TrainerSignup />
+        <Footer />
+        </>} />
+
+        <Route path="/auth/trainer/verify" element={<TrainerVerify />} />
+
+
+        <Route path='/auth/trainer/login' element={<>
+        <Navbar />
+        <TrainerLogin />
+        <Footer />
+        </>} />
+
+        <Route path='/auth/trainer/login/verify' element={<TrainerLoginVerify />} />
+
+        {/* /trainer/dashboard */}
+        <Route path='/trainer/dashboard' element={<>
+        <TrainerProtectedRoute>
+          <TrainerNavbar />
+          <TrainerDashboard />
+          <Footer />
+        </TrainerProtectedRoute>
+        </>} />
+        <Route path='/create/course' element={<>
+        <TrainerProtectedRoute>
+          <TrainerNavbar />
+          <CreateCourse />
+          <Footer />
+        </TrainerProtectedRoute>
+        </>} />
+        <Route path='/trainer/course/:courseId' element={<>
+        <TrainerProtectedRoute>
+          <TrainerNavbar />
+          <CourseDetailsPage />
+          <Footer />
+        </TrainerProtectedRoute>
+        </>} />
+
+        <Route path='/trainer/videos/:courseId' element={<>
+        <TrainerProtectedRoute>
+          <TrainerNavbar />
+          <CourseVideosPage />
+          <Footer />
+        </TrainerProtectedRoute>
+        </>} />
+
+        <Route path='/trainer/students/:courseId' element={<>
+        <TrainerProtectedRoute>
+          <TrainerNavbar />
+          <EnrolledStudentsPage />
+          <Footer />
+        </TrainerProtectedRoute>
         </>} />
 
 
