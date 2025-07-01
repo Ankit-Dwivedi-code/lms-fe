@@ -70,6 +70,7 @@ import CreateCourse from './components/trainer_create_course/CreateCourse.jsx';
 import CourseDetailsPage from './components/trainer_course_page/CourseDetailsPage.jsx';
 import CourseVideosPage from './components/trainer_course_video/CourseVideosPage.jsx';
 import EnrolledStudentsPage from './components/trainer_course_students/EnrolledStudentsPage.jsx';
+import WhyNeuroNest from './components/why_neuronest/WhyNeuroNest.jsx';
 
 
 function App() {
@@ -188,7 +189,8 @@ function App() {
               <Courses />
               <VoiceOfSuccess />
               {/* <FeaturedPrograms /> */}
-              <FeaturedCourses />
+              {/* <FeaturedCourses /> */}
+              <WhyNeuroNest />
               <MeetOurInstructors />
               <FAQAccordion />
               <JoinNow />
