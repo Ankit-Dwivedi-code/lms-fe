@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 const CourseDetail = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
 
   useEffect(() => {
-    const fetchCourse = async () => {
+    const fetchData = async () => {
       try {
+        // Fetch course details
         const res = await fetch(
           `https://neuronest-be-production.up.railway.app/api/a2/course/get/${courseId}`,
           { credentials: "include" }
@@ -19,12 +21,23 @@ const CourseDetail = () => {
         const data = await res.json();
         if (data.success) setCourse(data.data);
         else toast.error("Course not found");
+
+        // Fetch enrollment status
+        const enrollRes = await fetch(
+          `https://neuronest-be-production.up.railway.app/api/a2/students/check-enrolled-courses/${courseId}`,
+          { credentials: "include" }
+        );
+        const enrollData = await enrollRes.json();
+        if (enrollData.success && enrollData.data?.isEnrolled) {
+          setIsEnrolled(true);
+        }
       } catch (err) {
-        console.error("Failed to fetch course:", err);
-        toast.error("Something went wrong while fetching course.");
+        console.error("Error loading course or enrollment:", err);
+        toast.error("Error loading course details.");
       }
     };
-    fetchCourse();
+
+    fetchData();
   }, [courseId]);
 
   const loadRazorpayScript = () => {
@@ -38,88 +51,87 @@ const CourseDetail = () => {
   };
 
   const handlePayment = async () => {
-  if (!course) return;
-  setLoading(true);
+    if (!course) return;
+    setLoading(true);
 
-  const loaded = await loadRazorpayScript();
-  if (!loaded) {
-    toast.error("Razorpay SDK failed to load.");
-    setLoading(false);
-    return;
-  }
-
-  try {
-    const res = await fetch(
-      `https://neuronest-be-production.up.railway.app/api/a2/pay/initialize-payment/${courseId}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      }
-    );
-
-    const data = await res.json();
-    if (!data.success || !data.data?.id) {
-      toast.error("Failed to initialize payment.");
+    const loaded = await loadRazorpayScript();
+    if (!loaded) {
+      toast.error("Razorpay SDK failed to load.");
       setLoading(false);
       return;
     }
 
-    const options = {
-      key: "rzp_test_Bp55NAok5a31TY",
-      amount: data.data.amount,
-      currency: "INR",
-      name: course.courseName,
-      description: course.description,
-      order_id: data.data.id,
-      handler: async (response) => {
-        try {
-          const verifyRes = await fetch(
-            `https://neuronest-be-production.up.railway.app/api/a2/pay/verify-payment/${courseId}`,
-            {
-              method: "POST",
-              credentials: "include",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-              }),
-            }
-          );
-
-          const verifyData = await verifyRes.json();
-          if (verifyData.success) {
-            toast.success("Enrollment successful!");
-            navigate(`/course-access/${courseId}`);
-          } else {
-            toast.error("Verification failed: " + verifyData.message);
-          }
-        } catch (err) {
-          console.error("Error during payment verification:", err);
-          toast.error("Enrollment verification failed.");
+    try {
+      const res = await fetch(
+        `https://neuronest-be-production.up.railway.app/api/a2/pay/initialize-payment/${courseId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
         }
-      },
-      prefill: {
-        name: "NeuroNest User",
-        email: "user@example.com",
-        contact: "9999999999",
-      },
-      theme: {
-        color: "#8e2de2",
-      },
-    };
+      );
 
-    const rzp = new window.Razorpay(options);
-    rzp.open();
-  } catch (err) {
-    console.error("Payment error:", err);
-    toast.error("Payment process failed.");
-  } finally {
-    setLoading(false);
-  }
-};
+      const data = await res.json();
+      if (!data.success || !data.data?.id) {
+        toast.error("Failed to initialize payment.");
+        setLoading(false);
+        return;
+      }
 
+      const options = {
+        key: "rzp_test_Bp55NAok5a31TY",
+        amount: data.data.amount,
+        currency: "INR",
+        name: course.courseName,
+        description: course.description,
+        order_id: data.data.id,
+        handler: async (response) => {
+          try {
+            const verifyRes = await fetch(
+              `https://neuronest-be-production.up.railway.app/api/a2/pay/verify-payment/${courseId}`,
+              {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                }),
+              }
+            );
+
+            const verifyData = await verifyRes.json();
+            if (verifyData.success) {
+              toast.success("Enrollment successful!");
+              navigate(`/course-access/${courseId}`);
+            } else {
+              toast.error("Verification failed: " + verifyData.message);
+            }
+          } catch (err) {
+            console.error("Error during payment verification:", err);
+            toast.error("Enrollment verification failed.");
+          }
+        },
+        prefill: {
+          name: "NeuroNest User",
+          email: "user@example.com",
+          contact: "9999999999",
+        },
+        theme: {
+          color: "#8e2de2",
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      console.error("Payment error:", err);
+      toast.error("Payment process failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!course) {
     return (
@@ -158,17 +170,27 @@ const CourseDetail = () => {
             Price: ₹{course.price}
           </div>
 
-          <button
-            onClick={handlePayment}
-            disabled={loading}
-            className={`px-6 py-3 rounded-full font-semibold transition-all shadow-lg ${
-              loading
-                ? "bg-gray-500 cursor-not-allowed"
-                : "bg-gradient-to-r from-pink-500 to-purple-500 hover:from-purple-600 hover:to-cyan-500"
-            }`}
-          >
-            {loading ? "Processing Payment..." : "Enroll Now"}
-          </button>
+          {/* Conditional Button */}
+          {isEnrolled ? (
+            <button
+              onClick={() => navigate(`/course-access/${courseId}`)}
+              className="px-6 py-3 rounded-full font-semibold transition-all shadow-lg bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-blue-500"
+            >
+              Go to Course
+            </button>
+          ) : (
+            <button
+              onClick={handlePayment}
+              disabled={loading}
+              className={`px-6 py-3 rounded-full font-semibold transition-all shadow-lg ${
+                loading
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "bg-gradient-to-r from-pink-500 to-purple-500 hover:from-purple-600 hover:to-cyan-500"
+              }`}
+            >
+              {loading ? "Processing Payment..." : "Enroll Now"}
+            </button>
+          )}
         </div>
 
         {/* Thumbnail */}
