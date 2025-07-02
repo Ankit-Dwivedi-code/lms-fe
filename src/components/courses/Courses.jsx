@@ -10,11 +10,17 @@ const Courses = () => {
       try {
         const res = await axios.get('https://neuronest-be-production.up.railway.app/api/a2/course/all');
         if (res.data.success) {
-          // Show only latest 6 courses
-          const sortedCourses = res.data.data
+          // ✅ Filter only published & approved courses
+          const filtered = res.data.data.filter(
+            (course) => course.isPublished && course.approvalStatus === "Approved"
+          );
+
+          // ✅ Sort by createdAt and take latest 3
+          const latestCourses = filtered
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             .slice(0, 3);
-          setCourses(sortedCourses);
+
+          setCourses(latestCourses);
         }
       } catch (err) {
         console.error('Error fetching courses:', err.message);

@@ -10,8 +10,12 @@ const AllCourses = () => {
       try {
         const res = await axios.get('https://neuronest-be-production.up.railway.app/api/a2/course/all');
         if (res.data.success) {
-          const sortedCourses = res.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-          setCourses(sortedCourses);
+          // ✅ Filter only published and approved
+          const publishedCourses = res.data.data
+            .filter(course => course.isPublished && course.approvalStatus === "Approved")
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+          setCourses(publishedCourses);
         }
       } catch (err) {
         console.error('Error fetching courses:', err.message);
@@ -64,7 +68,7 @@ const AllCourses = () => {
             </div>
           ))
         ) : (
-          <p className="text-center col-span-full text-lg text-gray-400">No courses found</p>
+          <p className="text-center col-span-full text-lg text-gray-400">No published courses available right now.</p>
         )}
       </div>
     </div>
