@@ -69,81 +69,96 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0f1b] to-[#1a1a2e] text-white">
-      <ToastContainer />
-      <div
-        className={`w-full max-w-md p-8 rounded-xl shadow-lg border border-pink-500/20 bg-[#101020] ${shake ? 'shake' : ''}`}
-        data-aos="fade-up"
-      >
-        <h2 className="text-3xl font-extrabold text-center mb-6 text-cyan-400">
-          Sign In to NeuroNest
-        </h2>
+    <>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0f1b] to-[#1a1a2e] text-white">
+        <div
+          className={`w-full max-w-md p-8 rounded-xl shadow-lg border border-pink-500/20 bg-[#101020] ${shake ? 'shake' : ''}`}
+          data-aos="fade-up"
+        >
+          <h2 className="text-3xl font-extrabold text-center mb-6 text-cyan-400">
+            Sign In to NeuroNest
+          </h2>
 
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="block text-sm mb-1">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className={`w-full px-4 py-2 rounded-md bg-[#181828] border ${errors.email ? 'border-red-500' : 'border-cyan-400/30'} focus:outline-none focus:ring-2 focus:ring-pink-500`}
-              placeholder="you@example.com"
-            />
-            {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email}</p>}
-          </div>
-
-          {/* Password */}
-          <div className="relative">
-            <label htmlFor="password" className="block text-sm mb-1">
-              Password
-            </label>
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              value={formData.password}
-              onChange={handleInputChange}
-              className={`w-full px-4 py-2 rounded-md bg-[#181828] border ${errors.password ? 'border-red-500' : 'border-cyan-400/30'} focus:outline-none focus:ring-2 focus:ring-pink-500`}
-              placeholder="Enter your password"
-            />
-            <div
-              className="absolute right-3 top-[38px] cursor-pointer text-gray-400 hover:text-pink-400"
-              onClick={() => setShowPassword((prev) => !prev)}
-            >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="block text-sm mb-1 text-gray-300">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-2 rounded-md bg-[#181828] border ${errors.email ? 'border-red-500' : 'border-cyan-400/30'} focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                placeholder="you@example.com"
+              />
+              {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email}</p>}
             </div>
-            {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>}
-          </div>
 
-          {/* Forgot password */}
-          <div className="text-right text-sm">
-            <Link to="/auth/a2/forgotpassword" className="text-cyan-400 hover:underline">
-              Forgot Password?
+            {/* Password */}
+            <div className="relative">
+              <label htmlFor="password" className="block text-sm mb-1 text-gray-300">
+                Password
+              </label>
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-2 rounded-md bg-[#181828] border ${errors.password ? 'border-red-500' : 'border-cyan-400/30'} focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                placeholder="Enter your password"
+              />
+              <div
+                className="absolute right-3 top-[38px] cursor-pointer text-gray-400 hover:text-pink-400"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </div>
+              {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>}
+            </div>
+
+            {/* Forgot password */}
+            <div className="text-right text-sm">
+              <Link to="/auth/a2/forgotpassword" className="text-cyan-400 hover:underline">
+                Forgot Password?
+              </Link>
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-pink-500 to-cyan-500 text-white py-2 rounded-md font-bold hover:from-pink-600 hover:to-purple-500 transition duration-300"
+            >
+              {loading ? <SquareLoader color="#fff" size={20} /> : 'Sign In'}
+            </button>
+          </form>
+
+          {/* Footer */}
+          <p className="mt-6 text-center text-sm text-gray-400">
+            New here?{' '}
+            <Link to="/signup/student" className="text-pink-400 hover:underline font-medium">
+              Create Account
             </Link>
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-pink-500 to-cyan-500 text-white py-2 rounded-md font-bold hover:from-pink-600 hover:to-purple-500 transition duration-300"
-          >
-            {loading ? <SquareLoader color="#fff" size={20} /> : 'Sign In'}
-          </button>
-        </form>
-
-        {/* Footer */}
-        <p className="mt-6 text-center text-sm text-gray-400">
-          New here?{' '}
-          <Link to="/signup/student" className="text-pink-400 hover:underline font-medium">
-            Create Account
-          </Link>
-        </p>
+          </p>
+        </div>
       </div>
-    </div>
+
+      {/* ✅ Toast container placed outside scroll containers */}
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss
+        pauseOnHover
+        draggable
+        theme="dark"
+        style={{ zIndex: 9999 }}
+      />
+    </>
   );
 };
 

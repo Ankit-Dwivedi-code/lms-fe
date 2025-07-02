@@ -64,9 +64,11 @@ const Signup = () => {
           }
         });
 
+        toast.dismiss(); // clear old toasts
         toast.success('Account created successfully!');
-        navigate('/auth/a2/verify-signup', { state: { email: formData.email } });
+        navigate('/auth/a2/login');
       } catch (error) {
+        toast.dismiss();
         toast.error(error.response?.data?.message || 'Signup failed. Please try again.');
       } finally {
         setLoading(false);
@@ -86,7 +88,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0f1b] to-[#1a1a2e] text-white">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0f1b] to-[#1a1a2e] text-white px-4">
       <div className="flex flex-col lg:flex-row w-full lg:w-10/12 xl:w-8/12 rounded-xl overflow-hidden shadow-lg border border-pink-500/10" data-aos="fade-up">
         <div className="hidden lg:flex lg:w-1/2 bg-[#181828] p-8 flex-col justify-center">
           <h1 className="text-3xl font-bold text-cyan-400 mb-8">NeuroNest</h1>
@@ -108,7 +110,6 @@ const Signup = () => {
           <div className="w-full max-w-md">
             <h2 className="text-2xl font-bold mb-6 text-cyan-400">Create your account</h2>
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Fields */}
               {[
                 { id: 'email', label: 'Email', type: 'email', placeholder: 'you@example.com' },
                 { id: 'username', label: 'Your Name', type: 'text', placeholder: 'John Doe' },
@@ -131,7 +132,6 @@ const Signup = () => {
                 </div>
               ))}
 
-              {/* Avatar */}
               <div>
                 <label htmlFor="avatar" className="block text-sm font-medium mb-1 text-gray-300">Avatar</label>
                 <input
@@ -158,7 +158,15 @@ const Signup = () => {
               </button>
             </form>
 
-            <ToastContainer position="top-right" autoClose={3000} hideProgressBar closeOnClick pauseOnHover draggable />
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar
+              closeOnClick
+              pauseOnHover
+              draggable
+              style={{ zIndex: 9999 }}
+            />
 
             <p className="text-sm text-gray-400 mt-4">
               Already have an account?{' '}
