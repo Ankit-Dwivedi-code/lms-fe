@@ -71,6 +71,7 @@ import CourseDetailsPage from './components/trainer_course_page/CourseDetailsPag
 import CourseVideosPage from './components/trainer_course_video/CourseVideosPage.jsx';
 import EnrolledStudentsPage from './components/trainer_course_students/EnrolledStudentsPage.jsx';
 import WhyNeuroNest from './components/why_neuronest/WhyNeuroNest.jsx';
+import AllCourses from './components/courses_all/AllCourses.jsx';
 
 
 function App() {
@@ -198,6 +199,13 @@ function App() {
             </>
           } 
         />
+
+        {/* all courses */}
+        <Route path='/all-courses' element={<>
+        <Navbar />
+        <AllCourses />
+        <Footer />
+        </>} />
 
         {/* Enroll Courses  */}
         <Route path='/courses/:courseId' element={<>

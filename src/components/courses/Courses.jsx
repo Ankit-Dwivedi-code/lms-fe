@@ -13,7 +13,7 @@ const Courses = () => {
           // Show only latest 6 courses
           const sortedCourses = res.data.data
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .slice(0, 6);
+            .slice(0, 3);
           setCourses(sortedCourses);
         }
       } catch (err) {
