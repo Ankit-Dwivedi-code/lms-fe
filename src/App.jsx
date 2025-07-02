@@ -217,29 +217,7 @@ function App() {
         </ProtectedRoute>
         </>} />
 
-        <Route path='/course-DataAnalytics' element={<>
-        <Navbar />
-        <DataAnalytics />
-        <Footer />
-        </>} />
-
-        <Route path='/course-ML' element={<>
-        <Navbar />
-        <ML />
-        <Footer />
-        </>} />
-
-        <Route path='/course-Devops' element={<>
-        <Navbar />
-        <DevOps />
-        <Footer />
-        </>} />
-
-        <Route path='/course-QA' element={<>
-        <Navbar />
-        <QA />
-        <Footer />
-        </>} />
+        
 
         {/* Trainer */}
         <Route path='/signup/trainer' element={<>
