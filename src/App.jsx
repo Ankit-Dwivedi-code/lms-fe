@@ -17,13 +17,7 @@ import Login from './components/login/Login.jsx';
 import Signup from './components/signup/Signup.jsx';
 import ForgotPassword from './components/ForgotPassword/ForgotPassword.jsx';
 import ErrorPage from './components/ErrorPage/ErrorPage.jsx';
-import Mern from './components/enrollCourses/Mern.jsx';
-import DataAnalytics from './components/enrollCourses/DataAnalytics.jsx';
-import ML from './components/enrollCourses/MachineLearning.jsx';
-import DevOps from './components/enrollCourses/DevOps.jsx';
-import QA from './components/enrollCourses/QualityAna.jsx';
 import SignupOtp from './components/verifysignupotp/SignupOtp.jsx'
-import StudentProfile from './components/student_profile/Profile.jsx'
 import StudentLoginOtp from './components/verify_student_login/VerifyLogin.jsx'
 import VerifyForgotPass from './components/verify_forgot_password/VerifyForgotPass.jsx'
 import ResetPassword from './components/reset-password/ResetPassword.jsx'
