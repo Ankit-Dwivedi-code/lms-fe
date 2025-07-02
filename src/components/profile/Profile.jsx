@@ -48,12 +48,6 @@ const Profile = () => {
     }
   };
 
-  if (loading)
-    return <div className="text-center py-10 text-lg font-semibold text-cyan-500">Loading...</div>;
-  if (!user)
-    return <div className="text-center py-10 text-lg font-semibold text-red-500">User not found</div>;
-
-  // Format DOB to DD/MM/YYYY
   const formatDOB = (dob) => {
     const date = new Date(dob);
     const day = String(date.getDate()).padStart(2, "0");
@@ -62,14 +56,20 @@ const Profile = () => {
     return `${day}/${month}/${year}`;
   };
 
+  if (loading)
+    return <div className="text-center py-10 text-lg font-semibold text-cyan-500">Loading...</div>;
+
+  if (!user)
+    return <div className="text-center py-10 text-lg font-semibold text-red-500">User not found</div>;
+
   return (
-    <div className="max-w-4xl mx-auto mt-14 p-6 sm:p-10 bg-gradient-to-br from-[#1a1a2e] to-[#0f0f1b] text-white rounded-xl shadow-2xl border border-pink-600/10">
-      <h2 className="text-3xl font-extrabold text-center mb-10 text-cyan-400">👤 My Profile</h2>
+    <div className="max-w-5xl mx-auto mt-14 p-6 sm:p-10 bg-gradient-to-br from-[#1a1a2e] to-[#0f0f1b] text-white rounded-xl shadow-2xl border border-pink-600/10">
+      <h2 className="text-4xl font-extrabold text-center mb-10 text-cyan-400 tracking-wide">👤 My Profile</h2>
 
       <div className="flex flex-col md:flex-row items-center md:items-start gap-10">
         {/* Avatar Section */}
-        <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-cyan-400 shadow-xl group cursor-pointer">
-          <label className="absolute inset-0 w-full h-full">
+        <div className="relative group w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden border-4 border-cyan-400 shadow-xl transition-all duration-300">
+          <label className="cursor-pointer absolute inset-0">
             <img
               key={avatarKey}
               src={user.avatar ? `${user.avatar}?t=${avatarKey}` : "/default-avatar.png"}
@@ -77,14 +77,14 @@ const Profile = () => {
               className="w-full h-full object-cover"
               onClick={() => setPreviewOpen(true)}
             />
-            {/* Hover Overlay */}
-            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-            {/* Edit Icon */}
-            <div className="absolute bottom-1 right-1 bg-cyan-600 p-1 rounded-full shadow-md hover:bg-pink-500 transition">
-              <FaEdit className="text-white text-sm" />
+            {/* Hover Overlay */}
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white text-sm font-semibold">
+              <FaEdit className="mb-1" />
+              <span>Edit Image</span>
             </div>
 
+            {/* Hidden file input */}
             <input
               type="file"
               className="hidden"
@@ -96,18 +96,18 @@ const Profile = () => {
 
         {/* Profile Info */}
         <div className="flex-1 space-y-4">
-          <div className="bg-white/5 p-4 rounded-lg border border-cyan-500/20 shadow-md">
-            <h3 className="text-xl font-bold text-pink-400">{user.username}</h3>
-            <p className="text-sm text-gray-300">📧 {user.email}</p>
+          <div className="bg-white/5 p-5 rounded-lg border border-cyan-500/20 shadow-md backdrop-blur-md">
+            <h3 className="text-2xl font-bold text-pink-400">{user.username}</h3>
+            <p className="text-sm text-gray-300 mt-1">📧 {user.email}</p>
             <p className="text-sm text-gray-300">📞 {user.phone}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white/5 p-4 rounded-lg border border-cyan-500/20 shadow-md">
+            <div className="bg-white/5 p-5 rounded-lg border border-cyan-500/20 shadow-md">
               <p className="text-cyan-300 font-semibold mb-1">🎓 Highest Qualification</p>
               <p className="text-gray-200 text-sm">{user.highestQualification || "Not provided"}</p>
             </div>
-            <div className="bg-white/5 p-4 rounded-lg border border-cyan-500/20 shadow-md">
+            <div className="bg-white/5 p-5 rounded-lg border border-cyan-500/20 shadow-md">
               <p className="text-cyan-300 font-semibold mb-1">🎂 Date of Birth</p>
               <p className="text-gray-200 text-sm">
                 {user.dateOfBirth ? formatDOB(user.dateOfBirth) : "Not provided"}
