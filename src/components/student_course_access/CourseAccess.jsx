@@ -22,7 +22,6 @@ const CourseAccess = () => {
         ]);
         setStudent(studentRes.data.data);
         setVideos(videoRes.data.data);
-        console.log('Course videos loaded:', videoRes.data.data);
       } catch (err) {
         toast.error('Failed to load course content. Please try again later.');
       } finally {
