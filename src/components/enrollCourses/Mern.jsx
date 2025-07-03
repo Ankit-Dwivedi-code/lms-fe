@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { FaStar } from "react-icons/fa";
 import "react-toastify/dist/ReactToastify.css";
 
 const CourseDetail = () => {
@@ -13,7 +14,6 @@ const CourseDetail = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch course details
         const res = await fetch(
           `https://neuronest-be-production.up.railway.app/api/a2/course/get/${courseId}`,
           { credentials: "include" }
@@ -22,7 +22,6 @@ const CourseDetail = () => {
         if (data.success) setCourse(data.data);
         else toast.error("Course not found");
 
-        // Fetch enrollment status
         const enrollRes = await fetch(
           `https://neuronest-be-production.up.railway.app/api/a2/students/check-enrolled-courses/${courseId}`,
           { credentials: "include" }
@@ -32,11 +31,10 @@ const CourseDetail = () => {
           setIsEnrolled(true);
         }
       } catch (err) {
-        console.error("Error loading course or enrollment:", err);
-        toast.error("Error loading course details.");
+        console.error("Error loading course:", err);
+        toast.error("Failed to load course details.");
       }
     };
-
     fetchData();
   }, [courseId]);
 
@@ -109,8 +107,8 @@ const CourseDetail = () => {
               toast.error("Verification failed: " + verifyData.message);
             }
           } catch (err) {
-            console.error("Error during payment verification:", err);
-            toast.error("Enrollment verification failed.");
+            console.error("Verification error:", err);
+            toast.error("Verification failed.");
           }
         },
         prefill: {
@@ -118,9 +116,7 @@ const CourseDetail = () => {
           email: "user@example.com",
           contact: "9999999999",
         },
-        theme: {
-          color: "#8e2de2",
-        },
+        theme: { color: "#8e2de2" },
       };
 
       const rzp = new window.Razorpay(options);
@@ -133,6 +129,16 @@ const CourseDetail = () => {
     }
   };
 
+  const renderStars = (count) => {
+    return (
+      <div className="flex text-yellow-400 mb-2">
+        {Array.from({ length: 5 }, (_, i) => (
+          <FaStar key={i} className={i < count ? "text-yellow-400" : "text-gray-500"} />
+        ))}
+      </div>
+    );
+  };
+
   if (!course) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-[#0f0f1b] text-white">
@@ -141,36 +147,42 @@ const CourseDetail = () => {
     );
   }
 
+  const avgRating =
+    course.reviews?.length > 0
+      ? Math.round(
+          course.reviews.reduce((acc, r) => acc + r.rating, 0) / course.reviews.length
+        )
+      : course.ratings;
+
   return (
     <div className="min-h-screen bg-[#0f0f1b] text-white px-5 py-12">
       <ToastContainer position="top-center" autoClose={3000} theme="dark" />
       <div className="max-w-6xl mx-auto flex flex-col-reverse lg:flex-row items-center gap-12">
         {/* Course Info */}
         <div className="flex-1">
-          <h1 className="text-4xl font-bold text-cyan-400 mb-4">
-            {course.courseName}
-          </h1>
+          <h1 className="text-4xl font-bold text-cyan-400 mb-4">{course.courseName}</h1>
+
+          {renderStars(avgRating)}
+          <p className="text-sm text-gray-400 mb-4">
+            ({course.reviews?.length || 0} Reviews)
+          </p>
+
           <p className="text-gray-300 text-lg mb-2">
-            <span className="font-medium text-pink-400">Level:</span>{" "}
-            {course.level}
+            <span className="font-medium text-pink-400">Level:</span> {course.level}
           </p>
           <p className="text-gray-300 text-lg mb-2">
-            <span className="font-medium text-pink-400">Language:</span>{" "}
-            {course.language}
+            <span className="font-medium text-pink-400">Language:</span> {course.language}
           </p>
           <p className="text-gray-300 text-lg mb-2">
-            <span className="font-medium text-pink-400">Category:</span>{" "}
-            {course.category}
+            <span className="font-medium text-pink-400">Category:</span> {course.category}
           </p>
-          <p className="text-gray-400 mt-4 mb-6 leading-relaxed">
-            {course.description}
-          </p>
+
+          <p className="text-gray-400 mt-4 mb-6 leading-relaxed">{course.description}</p>
 
           <div className="text-xl font-semibold text-green-400 mb-6">
             Price: ₹{course.price}
           </div>
 
-          {/* Conditional Button */}
           {isEnrolled ? (
             <button
               onClick={() => navigate(`/course-access/${courseId}`)}
@@ -198,10 +210,28 @@ const CourseDetail = () => {
           <img
             src={course.thumbnail}
             alt={course.courseName}
-            className="rounded-2xl shadow-[0_0_40px_rgba(255,0,150,0.2)] max-w-md w-full"
+            className="rounded-2xl shadow-[0_0_40px_rgba(255,0,150,0.3)] max-w-md w-full"
           />
         </div>
       </div>
+
+      {/* Reviews */}
+      {course.reviews?.length > 0 || course.ratings > 0 ? (
+  <div className="flex items-center mb-4">
+    {Array.from({ length: 5 }).map((_, index) => (
+      <span key={index} className={`text-xl mr-1 ${index < (
+        course.reviews?.length > 0
+          ? Math.round(course.reviews.reduce((a, r) => a + r.rating, 0) / course.reviews.length)
+          : Math.round(course.ratings)
+      ) ? "text-yellow-400" : "text-gray-600"}`}>
+        ★
+      </span>
+    ))}
+    <span className="text-sm text-gray-400 ml-2">
+      ({course.reviews?.length || 0} reviews)
+    </span>
+  </div>
+) : null}
     </div>
   );
 };

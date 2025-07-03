@@ -10,7 +10,6 @@ const AllCourses = () => {
       try {
         const res = await axios.get('https://neuronest-be-production.up.railway.app/api/a2/course/all');
         if (res.data.success) {
-          // ✅ Filter only published and approved
           const publishedCourses = res.data.data
             .filter(course => course.isPublished && course.approvalStatus === "Approved")
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -24,6 +23,22 @@ const AllCourses = () => {
 
     fetchCourses();
   }, []);
+
+  const getAverageRating = (course) => {
+    if (course.reviews?.length > 0) {
+      const total = course.reviews.reduce((acc, r) => acc + r.rating, 0);
+      return Math.round(total / course.reviews.length);
+    }
+    return Math.round(course.ratings || 0);
+  };
+
+  const renderStars = (avgRating) => (
+    <div className="flex text-yellow-400 text-sm mb-2">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <span key={i} className={i < avgRating ? 'text-yellow-400' : 'text-gray-600'}>★</span>
+      ))}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f0f1b] to-[#1a1a2e] text-white py-16 px-6">
@@ -39,34 +54,46 @@ const AllCourses = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto">
         {courses.length > 0 ? (
-          courses.map((course) => (
-            <div
-              key={course._id}
-              className="bg-[#1a1a2e]/60 border border-pink-500/10 backdrop-blur-sm rounded-xl shadow-md hover:shadow-pink-500/20 overflow-hidden transition-transform hover:scale-[1.02] group"
-            >
-              <img
-                src={course.thumbnail}
-                alt={course.courseName}
-                className="w-full h-44 object-cover"
-              />
-              <div className="p-5">
-                <h3 className="text-xl font-bold text-cyan-300 group-hover:text-pink-400 transition-colors">
-                  {course.courseName}
-                </h3>
-                <p className="text-sm text-gray-300 mt-2 mb-4 leading-relaxed line-clamp-3">
-                  {course.description}
-                </p>
-                <p className="text-base font-semibold text-green-400 mb-4">
-                  Price: ₹{course.price}
-                </p>
-                <Link to={`/courses/${course._id}`}>
-                  <button className="w-full py-2 rounded-full bg-gradient-to-r from-pink-600 to-cyan-500 hover:from-pink-500 hover:to-purple-500 transition text-white font-medium shadow-md shadow-pink-500/30">
-                    View Details
-                  </button>
-                </Link>
+          courses.map((course) => {
+            const avgRating = getAverageRating(course);
+            return (
+              <div
+                key={course._id}
+                className="bg-[#1a1a2e]/60 border border-pink-500/10 backdrop-blur-sm rounded-xl shadow-md hover:shadow-pink-500/20 overflow-hidden transition-transform hover:scale-[1.02] group"
+              >
+                <img
+                  src={course.thumbnail}
+                  alt={course.courseName}
+                  className="w-full h-44 object-cover"
+                />
+                <div className="p-5">
+                  <h3 className="text-xl font-bold text-cyan-300 group-hover:text-pink-400 transition-colors">
+                    {course.courseName}
+                  </h3>
+
+                  {/* ⭐ Rating stars */}
+                  {renderStars(avgRating)}
+                  <p className="text-xs text-gray-400 mb-2">
+                    ({course.reviews?.length || 0} reviews)
+                  </p>
+
+                  <p className="text-sm text-gray-300 mb-4 leading-relaxed line-clamp-3">
+                    {course.description}
+                  </p>
+
+                  <p className="text-base font-semibold text-green-400 mb-4">
+                    Price: ₹{course.price}
+                  </p>
+
+                  <Link to={`/courses/${course._id}`}>
+                    <button className="w-full py-2 rounded-full bg-gradient-to-r from-pink-600 to-cyan-500 hover:from-pink-500 hover:to-purple-500 transition text-white font-medium shadow-md shadow-pink-500/30">
+                      View Details
+                    </button>
+                  </Link>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <p className="text-center col-span-full text-lg text-gray-400">No published courses available right now.</p>
         )}

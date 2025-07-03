@@ -67,6 +67,8 @@ import EnrolledStudentsPage from './components/trainer_course_students/EnrolledS
 import WhyNeuroNest from './components/why_neuronest/WhyNeuroNest.jsx';
 import AllCourses from './components/courses_all/AllCourses.jsx';
 import EnrolledCourses from './components/student_enrolled_courses/EnrolledCourses.jsx';
+import StudentCourseProtectedRoute from './StudentCourseProtectedRoute.jsx';
+import CourseAccess from './components/student_course_access/CourseAccess.jsx';
 
 
 function App() {
@@ -218,6 +220,17 @@ function App() {
         <Navbar />
         <EnrolledCourses />
         <Footer />
+        </ProtectedRoute>
+        </>} />
+
+        {/* Course access route */}
+        <Route path='/course-access/:courseId' element={<>
+        <ProtectedRoute>
+        <StudentCourseProtectedRoute>
+          <Navbar />
+          <CourseAccess />
+          <Footer />
+        </StudentCourseProtectedRoute>
         </ProtectedRoute>
         </>} />
 
