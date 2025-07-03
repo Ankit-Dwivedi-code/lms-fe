@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { FaStar, FaRegStar, FaStarHalfAlt } from 'react-icons/fa';
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -10,12 +11,9 @@ const Courses = () => {
       try {
         const res = await axios.get('https://neuronest-be-production.up.railway.app/api/a2/course/all');
         if (res.data.success) {
-          // ✅ Filter only published & approved courses
           const filtered = res.data.data.filter(
-            (course) => course.isPublished && course.approvalStatus === "Approved"
+            (course) => course.isPublished && course.approvalStatus === 'Approved'
           );
-
-          // ✅ Sort by createdAt and take latest 3
           const latestCourses = filtered
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             .slice(0, 3);
@@ -29,6 +27,26 @@ const Courses = () => {
 
     fetchCourses();
   }, []);
+
+  // ⭐ Render stars based on average rating
+  const renderStars = (rating = 0) => {
+    const fullStars = Math.floor(rating);
+    const half = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (half ? 1 : 0);
+
+    return (
+      <div className="flex items-center gap-1">
+        {[...Array(fullStars)].map((_, i) => (
+          <FaStar key={`full-${i}`} className="text-yellow-400" />
+        ))}
+        {half && <FaStarHalfAlt className="text-yellow-400" />}
+        {[...Array(emptyStars)].map((_, i) => (
+          <FaRegStar key={`empty-${i}`} className="text-yellow-400" />
+        ))}
+        <span className="text-sm text-gray-400 ml-1">({rating.toFixed(1)}/5)</span>
+      </div>
+    );
+  };
 
   return (
     <section className="bg-[#0f0f1b] text-white py-16 px-5">
@@ -59,9 +77,16 @@ const Courses = () => {
               <p className="text-sm text-gray-300 mt-2 mb-4 leading-relaxed line-clamp-3">
                 {course.description}
               </p>
+
+              {/* ⭐ Rating */}
+              <div className="mb-4">
+                {renderStars(course.ratings || 0)}
+              </div>
+
               <p className="text-base font-semibold text-green-400 mb-4">
                 Price: ₹{course.price}
               </p>
+
               <Link to={`/courses/${course._id}`}>
                 <button className="w-full py-2 rounded-full bg-gradient-to-r from-pink-600 to-cyan-500 hover:from-pink-500 hover:to-purple-500 transition text-white font-medium shadow-md shadow-pink-500/30">
                   Explore Course
