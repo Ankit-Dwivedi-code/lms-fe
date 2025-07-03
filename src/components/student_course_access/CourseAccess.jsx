@@ -17,96 +17,101 @@ const CourseAccess = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const st = (await axios.get(`https://neuronest-be-production.up.railway.app/api/a2/students/get-student`, { withCredentials: true })).data.data;
-        setStudent(st);
-        const vid = (await axios.get(`https://neuronest-be-production.up.railway.app/api/a2/videos/course-videos/${courseId}`, { withCredentials: true })).data.data;
-        setVideos(vid);
-        const reviews = await axios.get(`https://neuronest-be-production.up.railway.app/api/a2/course/${courseId}/reviews`, { withCredentials: true });
-        if (reviews.data.success) {
-          const existing = reviews.data.data.find(r => r.student === st._id);
-          if (existing) {
-            setReview({ rating: existing.rating, reviewText: existing.reviewText });
-            setSubmitted(true);
-          }
-        }
+        const [studentRes, videoRes] = await Promise.all([
+          axios.get(`https://neuronest-be-production.up.railway.app/api/a2/students/get-student`, { withCredentials: true }),
+          axios.get(`https://neuronest-be-production.up.railway.app/api/a2/videos/course-videos/${courseId}`, { withCredentials: true })
+        ]);
+        setStudent(studentRes.data.data);
+        setVideos(videoRes.data.data);
       } catch (err) {
-        toast.error('Failed loading content');
+        toast.error('Failed to load course content. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
+
     loadData();
   }, [courseId]);
 
   const handleReviewSubmit = async () => {
     if (submitted || review.rating < 1 || !review.reviewText.trim()) {
-      toast.error('Please provide a rating & review!');
+      toast.error('Please provide both rating and review!');
       return;
     }
     try {
       await axios.post(`https://neuronest-be-production.up.railway.app/api/a2/course/${courseId}/review`, review, { withCredentials: true });
-      toast.success('Thank you! Your review is saved.');
+      toast.success('🎉 Thank you! Your review has been submitted.');
       setSubmitted(true);
     } catch {
-      toast.error('Unable to send review');
+      toast.error('Unable to submit review. Try again.');
     }
   };
 
   if (loading) {
-    return <div className="h-screen flex items-center justify-center bg-[#0f0f1b] text-white">Loading...</div>;
+    return (
+      <div className="h-screen flex items-center justify-center bg-[#0f0f1b] text-white text-xl animate-pulse">
+        Loading your course...
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f0f1b] text-white p-6 space-y-8">
-      <ToastContainer position="top-center" autoClose={2500}/>
+    <div className="min-h-screen bg-gradient-to-br from-[#0f0f1b] to-[#1a1a2e] text-white p-6 space-y-10">
+      <ToastContainer position="top-center" autoClose={2500} theme="dark" />
 
       {student && (
-        <h2 className="text-3xl md:text-4xl font-extrabold text-cyan-400">
-          Hey, {student.username}! You made the right decision 🎉
+        <h2 className="text-3xl md:text-4xl font-extrabold text-cyan-400 text-center">
+          Welcome, {student.username}! 🚀 You’ve made a great decision by enrolling.
         </h2>
       )}
 
-      <section className="my-6">
-        <h3 className="text-2xl font-semibold mb-4">All Course Videos</h3>
+      {/* Course Videos */}
+      <section className="my-10">
+        <h3 className="text-2xl font-semibold mb-6 text-pink-400 text-center">📚 Course Video Lessons</h3>
         {videos.length ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {videos.map((v) => (
-              <div key={v._id} className="bg-[#1a1a2e]/60 rounded-lg p-4 shadow-lg group hover:bg-[#1a1a2e]/80 transition">
-                <h4 className="text-lg font-medium mb-2">{v.title}</h4>
+              <div key={v._id} className="bg-[#1f1f2e] border border-cyan-500/20 rounded-lg p-4 shadow-xl hover:shadow-cyan-500/30 transition-all duration-300">
+                <h4 className="text-lg font-bold mb-2 text-cyan-300">{v.title}</h4>
                 <ReactPlayer
                   url={v.video}
-                  light={v.thumbnail}
+                  light={v.thumbnail || false}
+                  playing={false}
                   controls
                   width="100%"
-                  height="180px"
+                  height="200px"
+                  className="rounded overflow-hidden"
                 />
-                <p className="mt-2 text-gray-300 text-sm">{v.description}</p>
+                <p className="text-sm mt-3 text-gray-300">{v.description}</p>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-gray-400">No videos available yet. Please check back later.</p>
+          <p className="text-gray-400 text-center">⚠️ No videos available for this course yet.</p>
         )}
       </section>
 
-      <section className="my-6 bg-[#1a1a2e]/60 p-6 rounded-lg shadow-lg max-w-xl mx-auto">
-        <h3 className="text-2xl font-semibold mb-4">Your Review</h3>
+      {/* Review Section */}
+      <section className="bg-[#1a1a2e]/80 p-6 rounded-lg shadow-lg max-w-xl mx-auto border border-pink-500/20">
+        <h3 className="text-2xl font-bold text-pink-400 mb-4 text-center">📝 Leave a Review</h3>
 
-        <div className="flex items-center mb-3">
-          {[1,2,3,4,5].map((star) => (
+        <div className="flex justify-center gap-1 mb-4">
+          {[1, 2, 3, 4, 5].map((star) => (
             <FaStar
               key={star}
               onClick={() => !submitted && setReview({ ...review, rating: star })}
-              className={`cursor-pointer transition-colors ${star <= review.rating ? 'text-yellow-400' : 'text-gray-600'}`}
-              size={28}
+              className={`cursor-pointer transition-colors ${
+                star <= review.rating ? 'text-yellow-400' : 'text-gray-600'
+              }`}
+              size={30}
             />
           ))}
         </div>
 
         <textarea
           disabled={submitted}
-          className="w-full p-3 rounded border border-cyan-500/30 bg-[#0f0f1b] text-gray-200 focus:ring-2 focus:ring-pink-500"
-          placeholder="Share your thoughts..."
+          className="w-full p-4 rounded-lg border border-cyan-500/30 bg-[#0f0f1b] text-white placeholder:text-gray-400 focus:ring-2 focus:ring-pink-400 outline-none"
+          placeholder="Share how this course helped you grow or what you liked..."
           value={review.reviewText}
           onChange={(e) => setReview({ ...review, reviewText: e.target.value })}
           rows={4}
@@ -115,13 +120,13 @@ const CourseAccess = () => {
         <button
           onClick={handleReviewSubmit}
           disabled={submitted}
-          className={`mt-4 px-6 py-2 rounded-full font-semibold transition ${
+          className={`w-full mt-4 py-3 rounded-full font-semibold text-white text-lg shadow-md transition-all ${
             submitted
               ? 'bg-gray-500 cursor-not-allowed'
-              : 'bg-gradient-to-r from-pink-500 to-cyan-500 hover:opacity-90'
+              : 'bg-gradient-to-r from-pink-500 to-purple-500 hover:from-purple-600 hover:to-cyan-500'
           }`}
         >
-          {submitted ? 'Review Submitted' : 'Submit Review'}
+          {submitted ? '✅ Review Submitted' : '✨ Submit Review'}
         </button>
       </section>
     </div>
