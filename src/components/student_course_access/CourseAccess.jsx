@@ -74,14 +74,14 @@ const CourseAccess = () => {
               <div key={v._id} className="bg-[#1f1f2e] border border-cyan-500/20 rounded-lg p-4 shadow-xl hover:shadow-cyan-500/30 transition-all duration-300">
                 <h4 className="text-lg font-bold mb-2 text-cyan-300">{v.title}</h4>
                 <ReactPlayer
-                  url={v.video}
-                  light={v.thumbnail || false}
-                  playing={false}
-                  controls
-                  width="100%"
-                  height="200px"
-                  className="rounded overflow-hidden"
-                />
+  url={v.video}
+  playing={false}
+  controls
+  width="100%"
+  height="200px"
+  className="rounded overflow-hidden"
+/>
+
                 <p className="text-sm mt-3 text-gray-300">{v.description}</p>
               </div>
             ))}
