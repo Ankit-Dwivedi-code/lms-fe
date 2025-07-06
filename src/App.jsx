@@ -292,7 +292,7 @@ function App() {
           <Footer />
         </TrainerProtectedRoute>
         </>} />
-        <Route path='/edit-course/:courseId' element={<>
+        <Route path='/trainer/edit-course/:courseId' element={<>
         <TrainerProtectedRoute>
           <TrainerNavbar />
           <CourseEdit />
