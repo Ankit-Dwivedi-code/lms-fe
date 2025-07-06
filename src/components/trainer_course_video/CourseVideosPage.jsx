@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FiArrowLeft, FiUpload } from 'react-icons/fi';
+import { FiArrowLeft, FiUpload, FiTrash2, FiEdit2, FiX } from 'react-icons/fi';
 import { SquareLoader } from 'react-spinners';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CourseVideosPage = () => {
   const { courseId } = useParams();
   const [course, setCourse] = useState(null);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingVideo, setEditingVideo] = useState(null);
+  const [form, setForm] = useState({ title: '', description: '', thumbnail: null });
   const navigate = useNavigate();
 
-  // Fetch course name/details
   const fetchCourseDetails = async () => {
     try {
       const res = await axios.get(`https://neuronest-be-production.up.railway.app/api/a2/course/get/${courseId}`, {
@@ -20,11 +22,10 @@ const CourseVideosPage = () => {
       });
       setCourse(res.data.data);
     } catch {
-      toast.error("Failed to load course");
+      toast.error('Failed to load course');
     }
   };
 
-  // Fetch course videos
   const fetchVideos = async () => {
     try {
       const res = await axios.get(`https://neuronest-be-production.up.railway.app/api/a2/course/get-all-videos/${courseId}`, {
@@ -33,9 +34,59 @@ const CourseVideosPage = () => {
       const courseData = res.data.data[0];
       setVideos(courseData?.videos ? [courseData.videos] : []);
     } catch {
-      toast.error("Failed to fetch videos");
+      toast.error('Failed to fetch videos');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (videoId) => {
+    try {
+      await axios.delete(`https://neuronest-be-production.up.railway.app/api/a2/videos/delete/${videoId}`, {
+        withCredentials: true,
+      });
+      toast.success('Video deleted');
+      fetchVideos();
+    } catch {
+      toast.error('Error deleting video');
+    }
+  };
+
+  const openEditModal = (video, id) => {
+    setEditingVideo({ ...video, _id: id });
+    setForm({ title: video.title, description: video.description, thumbnail: null });
+  };
+
+  const closeEditModal = () => {
+    setEditingVideo(null);
+    setForm({ title: '', description: '', thumbnail: null });
+  };
+
+  const handleFormChange = (e) => {
+    const { id, value, files } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [id]: files ? files[0] : value,
+    }));
+  };
+
+  const handleUpdateSubmit = async () => {
+    if (!editingVideo?._id) return;
+
+    const data = new FormData();
+    if (form.title) data.append('title', form.title);
+    if (form.description) data.append('description', form.description);
+    if (form.thumbnail) data.append('thumbnail', form.thumbnail);
+
+    try {
+      await axios.put(`https://neuronest-be-production.up.railway.app/api/a2/videos/update/${editingVideo._id}`, data, {
+        withCredentials: true,
+      });
+      toast.success('Video updated!');
+      closeEditModal();
+      fetchVideos();
+    } catch {
+      toast.error('Failed to update video');
     }
   };
 
@@ -54,10 +105,11 @@ const CourseVideosPage = () => {
 
   return (
     <div className="min-h-screen bg-[#0f0f1b] text-white p-6">
+      <ToastContainer />
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button
-          onClick={() => navigate("/trainer/dashboard")}
+          onClick={() => navigate('/trainer/dashboard')}
           className="text-cyan-400 hover:text-white flex items-center gap-2"
         >
           <FiArrowLeft /> Back to Dashboard
@@ -70,46 +122,92 @@ const CourseVideosPage = () => {
         </button>
       </div>
 
-      {/* Course Info */}
+      {/* Course Title */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-pink-400">{course?.courseName}</h1>
-        <p className="text-gray-400 mt-1 text-sm">All videos for <span className="text-cyan-400">{course?.courseName} Stack Course</span></p>
+        <p className="text-gray-400 mt-1 text-sm">
+          All videos for <span className="text-cyan-400">{course?.courseName}</span>
+        </p>
       </div>
 
-      {/* Videos Grid */}
+      {/* Videos */}
       {videos.length === 0 ? (
-        <div className="text-center text-gray-500 mt-20 text-lg">
-          No videos uploaded yet.
-        </div>
+        <div className="text-center text-gray-500 mt-20 text-lg">No videos uploaded yet.</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videos.map((video, index) => (
+          {videos.map((video, i) => (
             <div
-              key={index}
-              className="bg-[#181828] rounded-lg p-4 border border-cyan-500/10 shadow-sm"
+              key={i}
+              className="bg-[#181828] rounded-lg p-4 border border-cyan-500/10 shadow-md relative"
             >
               <img
-                src={video.thumbnail || "https://via.placeholder.com/300x180?text=Video+Thumbnail"}
-                alt="video thumb"
+                src={video.thumbnail}
+                alt="video thumbnail"
                 className="rounded w-full h-40 object-cover mb-3"
               />
-              <h2 className="text-lg font-semibold text-cyan-300">{video.title || "Untitled Video"}</h2>
-              <p className="text-gray-400 text-sm mt-1 line-clamp-2">
-                {video.description || "No description"}
-              </p>
-              <a
-                href={video.youtubeLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block mt-3 text-sm text-blue-400 hover:underline"
-              >
-                Watch on YouTube
-              </a>
+              <h2 className="text-lg font-semibold text-cyan-300">{video.title}</h2>
+              <p className="text-sm text-gray-400 mt-1">{video.description}</p>
               <p className="mt-2 text-xs text-gray-500">
-                {video.isPublished ? "Published" : "Unpublished"}
+                Status: {video.isPublished ? 'Published ✅' : 'Unpublished ❌'}
               </p>
+              <div className="absolute top-3 right-3 flex gap-3">
+                <FiEdit2
+                  onClick={() => openEditModal(video, video._id)}
+                  className="cursor-pointer text-yellow-400 hover:text-yellow-300"
+                />
+                <FiTrash2
+                  onClick={() => handleDelete(video._id)}
+                  className="cursor-pointer text-red-500 hover:text-red-400"
+                />
+              </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editingVideo && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex justify-center items-center">
+          <div className="bg-[#101020] p-6 rounded-xl max-w-md w-full text-white relative">
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-white"
+              onClick={closeEditModal}
+            >
+              <FiX size={20} />
+            </button>
+            <h2 className="text-xl font-semibold mb-4 text-cyan-400">Edit Video</h2>
+            <div className="space-y-4">
+              <input
+                type="text"
+                id="title"
+                value={form.title}
+                onChange={handleFormChange}
+                placeholder="Video Title"
+                className="w-full p-2 rounded-md bg-[#181828] border border-cyan-400/30 outline-none"
+              />
+              <textarea
+                id="description"
+                value={form.description}
+                onChange={handleFormChange}
+                placeholder="Description"
+                rows={3}
+                className="w-full p-2 rounded-md bg-[#181828] border border-cyan-400/30 outline-none"
+              />
+              <input
+                id="thumbnail"
+                type="file"
+                accept="image/*"
+                onChange={handleFormChange}
+                className="text-sm text-gray-300"
+              />
+              <button
+                onClick={handleUpdateSubmit}
+                className="w-full py-2 mt-2 rounded-full bg-gradient-to-r from-pink-500 to-cyan-500 hover:from-pink-600 hover:to-purple-500 font-semibold"
+              >
+                Update Video
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
