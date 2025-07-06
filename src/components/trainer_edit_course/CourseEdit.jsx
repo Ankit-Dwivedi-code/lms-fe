@@ -55,7 +55,7 @@ const CourseEdit = () => {
       }, { withCredentials: true });
 
       toast.success("✅ Course updated successfully!");
-      setTimeout(() => navigate('/'), 2000);
+      setTimeout(() => navigate('/trainer/dashboard'), 2000);
     } catch (err) {
       toast.error("❌ Update failed. Please try again.");
     }
