@@ -69,6 +69,7 @@ import AllCourses from './components/courses_all/AllCourses.jsx';
 import EnrolledCourses from './components/student_enrolled_courses/EnrolledCourses.jsx';
 import StudentCourseProtectedRoute from './StudentCourseProtectedRoute.jsx';
 import CourseAccess from './components/student_course_access/CourseAccess.jsx';
+import CourseEdit from './components/trainer_edit_course/CourseEdit.jsx';
 
 
 function App() {
@@ -288,6 +289,13 @@ function App() {
         <TrainerProtectedRoute>
           <TrainerNavbar />
           <EnrolledStudentsPage />
+          <Footer />
+        </TrainerProtectedRoute>
+        </>} />
+        <Route path='/edit-course/:courseId' element={<>
+        <TrainerProtectedRoute>
+          <TrainerNavbar />
+          <CourseEdit />
           <Footer />
         </TrainerProtectedRoute>
         </>} />
