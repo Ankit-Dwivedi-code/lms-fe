@@ -27,18 +27,24 @@ const EnrolledStudentsPage = () => {
 
   // Get enrolled students
   const fetchStudents = async () => {
-    try {
-      const res = await axios.get(`https://neuronest-be-production.up.railway.app/api/a2/course/get-enrolled-students/${courseId}`, {
+  try {
+    const res = await axios.get(
+      `https://neuronest-be-production.up.railway.app/api/a2/course/get-enrolled-students/${courseId}`,
+      {
         withCredentials: true,
-      });
-      const courseData = res.data.data[0];
-      setStudents(courseData?.students ? [courseData.students] : []);
-    } catch {
-      toast.error("Failed to fetch students");
-    } finally {
-      setLoading(false);
-    }
-  };
+      }
+    );
+
+    // Extract all student objects from the API response
+    const allStudents = res.data.data.map((entry) => entry.students);
+    setStudents(allStudents);
+  } catch {
+    toast.error("Failed to fetch students");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchCourseDetails();
