@@ -30,13 +30,14 @@ const EnrolledStudentsPage = () => {
   try {
     const res = await axios.get(
       `https://neuronest-be-production.up.railway.app/api/a2/course/get-enrolled-students/${courseId}`,
-      {
-        withCredentials: true,
-      }
+      { withCredentials: true }
     );
 
-    // Extract all student objects from the API response
-    const allStudents = res.data.data.map((entry) => entry.students);
+    // ✅ Filter out entries where students is an empty object or falsy
+    const allStudents = res.data.data
+      .map((entry) => entry.students)
+      .filter((s) => s && Object.keys(s).length > 0); // Only keep valid non-empty student objects
+
     setStudents(allStudents);
   } catch {
     toast.error("Failed to fetch students");
@@ -44,6 +45,7 @@ const EnrolledStudentsPage = () => {
     setLoading(false);
   }
 };
+
 
 
   useEffect(() => {
