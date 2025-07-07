@@ -33,7 +33,7 @@ const CourseVideosPage = () => {
     });
     const courseData = res.data.data[0];
     // ✅ Correctly set videos if it's already an array
-    setVideos(courseData?.videos ? courseData.videos : []);
+    setVideos(Array.isArray(courseData?.videos) ? courseData.videos : courseData?.videos ? [courseData.videos] : []);
   } catch {
     toast.error('Failed to fetch videos');
   } finally {
