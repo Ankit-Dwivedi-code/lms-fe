@@ -97,9 +97,7 @@ const About = () => {
           <h2 className="text-3xl font-bold text-center text-cyan-400 mb-10">Meet Our Instructors</h2>
           <div className="grid md:grid-cols-3 gap-10">
             {[
-              { name: "Ankit Dwivedi", role: "Full Stack Developer", img: "/img/ankit.jpg" },
-              { name: "XYZ Verma", role: "AI/ML Expert", img: "/img/men.png" },
-              { name: "ABC Iyer", role: "UI/UX Designer", img: "/img/women.png" },
+              { name: "Ankit Dwivedi", role: "Full Stack Developer", img: "/img/men.png" },
             ].map((inst, i) => (
               <div
                 key={i}
