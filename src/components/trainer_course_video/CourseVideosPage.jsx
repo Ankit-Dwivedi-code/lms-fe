@@ -8,12 +8,13 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const CourseVideosPage = () => {
   const { courseId } = useParams();
+  const navigate = useNavigate();
+
   const [course, setCourse] = useState(null);
-  const [videos, setVideos] = useState([]);
+  const [video, setVideo] = useState(null); // Single video object now
   const [loading, setLoading] = useState(true);
   const [editingVideo, setEditingVideo] = useState(null);
   const [form, setForm] = useState({ title: '', description: '', thumbnail: null });
-  const navigate = useNavigate();
 
   const fetchCourseDetails = async () => {
     try {
@@ -27,36 +28,39 @@ const CourseVideosPage = () => {
   };
 
   const fetchVideos = async () => {
-  try {
-    const res = await axios.get(`https://neuronest-be-production.up.railway.app/api/a2/course/get-all-videos/${courseId}`, {
-      withCredentials: true,
-    });
-    const courseData = res.data.data[0];
-    // ✅ Correctly set videos if it's already an array
-    setVideos(Array.isArray(courseData?.videos) ? courseData.videos : courseData?.videos ? [courseData.videos] : []);
-  } catch {
-    toast.error('Failed to fetch videos');
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-  const handleDelete = async (videoId) => {
     try {
-      await axios.delete(`https://neuronest-be-production.up.railway.app/api/a2/videos/delete/${videoId}`, {
+      const res = await axios.get(`https://neuronest-be-production.up.railway.app/api/a2/course/get-all-videos/${courseId}`, {
+        withCredentials: true,
+      });
+      const courseData = res.data.data[0];
+      setVideo(courseData?.videos || null);
+    } catch {
+      toast.error('Failed to fetch video');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!video?._id) return;
+    try {
+      await axios.delete(`https://neuronest-be-production.up.railway.app/api/a2/videos/delete/${video._id}`, {
         withCredentials: true,
       });
       toast.success('Video deleted');
-      fetchVideos();
+      setVideo(null);
     } catch {
       toast.error('Error deleting video');
     }
   };
 
-  const openEditModal = (video, id) => {
-    setEditingVideo({ ...video, _id: id });
-    setForm({ title: video.title, description: video.description, thumbnail: null });
+  const openEditModal = () => {
+    setEditingVideo(video);
+    setForm({
+      title: video.title,
+      description: video.description,
+      thumbnail: null
+    });
   };
 
   const closeEditModal = () => {
@@ -108,6 +112,7 @@ const CourseVideosPage = () => {
   return (
     <div className="min-h-screen bg-[#0f0f1b] text-white p-6">
       <ToastContainer />
+      
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button
@@ -124,7 +129,7 @@ const CourseVideosPage = () => {
         </button>
       </div>
 
-      {/* Course Title */}
+      {/* Course Info */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-pink-400">{course?.courseName}</h1>
         <p className="text-gray-400 mt-1 text-sm">
@@ -132,38 +137,32 @@ const CourseVideosPage = () => {
         </p>
       </div>
 
-      {/* Videos */}
-      {videos.length === 0 ? (
-        <div className="text-center text-gray-500 mt-20 text-lg">No videos uploaded yet.</div>
+      {/* Video Card */}
+      {!video ? (
+        <div className="text-center text-gray-500 mt-20 text-lg">No video uploaded yet.</div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videos.map((video, i) => (
-            <div
-              key={i}
-              className="bg-[#181828] rounded-lg p-4 border border-cyan-500/10 shadow-md relative"
-            >
-              <img
-                src={video.thumbnail}
-                alt="video thumbnail"
-                className="rounded w-full h-40 object-cover mb-3"
-              />
-              <h2 className="text-lg font-semibold text-cyan-300">{video.title}</h2>
-              <p className="text-sm text-gray-400 mt-1">{video.description}</p>
-              <p className="mt-2 text-xs text-gray-500">
-                Status: {video.isPublished ? 'Published ✅' : 'Unpublished ❌'}
-              </p>
-              <div className="absolute top-3 right-3 flex gap-3">
-                <FiEdit2
-                  onClick={() => openEditModal(video, video._id)}
-                  className="cursor-pointer text-yellow-400 hover:text-yellow-300"
-                />
-                <FiTrash2
-                  onClick={() => handleDelete(video._id)}
-                  className="cursor-pointer text-red-500 hover:text-red-400"
-                />
-              </div>
-            </div>
-          ))}
+        <div className="bg-[#181828] rounded-lg p-4 border border-cyan-500/10 shadow-md relative max-w-lg mx-auto">
+          <video controls src={video.video} className="w-full rounded mb-3" />
+          <img
+            src={video.thumbnail}
+            alt="Video Thumbnail"
+            className="w-full h-40 object-cover rounded mb-3"
+          />
+          <h2 className="text-lg font-semibold text-cyan-300">{video.title}</h2>
+          <p className="text-sm text-gray-400 mt-1">{video.description}</p>
+          <p className="mt-2 text-xs text-gray-500">
+            Status: {video.isPublished ? 'Published ✅' : 'Unpublished ❌'}
+          </p>
+          <div className="absolute top-3 right-3 flex gap-3">
+            <FiEdit2
+              onClick={openEditModal}
+              className="cursor-pointer text-yellow-400 hover:text-yellow-300"
+            />
+            <FiTrash2
+              onClick={handleDelete}
+              className="cursor-pointer text-red-500 hover:text-red-400"
+            />
+          </div>
         </div>
       )}
 
