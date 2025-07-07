@@ -162,7 +162,7 @@ function App() {
         <Footer />
         </>} />
 
-        <Route path="/admin-dashboard" element={<>
+        <Route path="/admin/dashboard" element={<>
         <AdminProtectedRoute>
         <AdminNavbar />
         <AdminDashboard />
