@@ -1,3 +1,5 @@
+// CourseVideosPage.jsx
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -133,6 +135,7 @@ const CourseVideosPage = () => {
   return (
     <div className="min-h-screen bg-[#0f0f1b] text-white p-6">
       <ToastContainer />
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => navigate('/trainer/dashboard')}
@@ -148,6 +151,7 @@ const CourseVideosPage = () => {
         </button>
       </div>
 
+      {/* Course Title */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-pink-400">{course?.courseName}</h1>
         <p className="text-gray-400 mt-1 text-sm">
@@ -155,22 +159,23 @@ const CourseVideosPage = () => {
         </p>
       </div>
 
+      {/* Videos */}
       {!video ? (
         <div className="text-center text-gray-500 mt-20 text-lg">No video uploaded yet.</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <div className="bg-[#181828] p-4 rounded-lg border border-cyan-500/10 shadow relative">
+          <div className="bg-[#181828] p-4 rounded-lg border border-cyan-500/10 shadow relative max-w-sm mx-auto">
             <img
               src={video.thumbnail}
               alt="thumbnail"
-              className="rounded w-full h-36 object-cover mb-3"
+              className="rounded w-full h-32 object-cover mb-2"
             />
             <video
               src={video.video}
               controls
               className="w-full h-32 rounded-md object-cover"
             />
-            <h2 className="text-lg font-semibold text-cyan-300 mt-2">{video.title}</h2>
+            <h2 className="text-md font-semibold text-cyan-300 mt-2">{video.title}</h2>
             <p className="text-sm text-gray-400 mt-1">{video.description}</p>
             <p className="mt-2 text-xs text-gray-500">
               Status: {video.isPublished ? 'Published ✅' : 'Unpublished ❌'}
@@ -193,6 +198,7 @@ const CourseVideosPage = () => {
         </div>
       )}
 
+      {/* Edit Modal */}
       {editingVideo && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex justify-center items-center">
           <div className="bg-[#101020] p-6 rounded-xl max-w-md w-full text-white relative">
