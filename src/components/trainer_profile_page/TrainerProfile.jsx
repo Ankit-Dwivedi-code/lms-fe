@@ -9,8 +9,7 @@ const TrainerProfile = () => {
   const [trainer, setTrainer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({ username: '', email: '', subjectname: '' });
-  const [avatarFile, setAvatarFile] = useState(null);
+  const [form, setForm] = useState({ username: '', subjectname: '' });
   const [avatarLoading, setAvatarLoading] = useState(false);
 
   const fetchTrainer = async () => {
@@ -21,7 +20,6 @@ const TrainerProfile = () => {
       setTrainer(res.data.data);
       setForm({
         username: res.data.data.username,
-        email: res.data.data.email,
         subjectname: res.data.data.subjectname,
       });
     } catch {
@@ -85,6 +83,7 @@ const TrainerProfile = () => {
   return (
     <div className="min-h-screen bg-[#0f0f1b] text-gray-400 p-6 flex flex-col items-center">
       <ToastContainer />
+
       {/* Avatar Section */}
       <div className="relative">
         {avatarLoading ? (
@@ -141,14 +140,12 @@ const TrainerProfile = () => {
           </div>
 
           <div>
-            <label className="text-gray-400 text-sm">Email</label>
+            <label className="text-gray-400 text-sm">Email (read-only)</label>
             <input
-              id="email"
               type="email"
-              value={form.email}
-              onChange={handleFormChange}
-              className="w-full bg-[#0f0f1b] p-2 rounded border border-cyan-500/20 outline-none"
-              readOnly={!editing}
+              value={trainer.email}
+              readOnly
+              className="w-full bg-[#1f1f2b] p-2 rounded border border-cyan-500/10 outline-none cursor-not-allowed text-gray-500"
             />
           </div>
 
