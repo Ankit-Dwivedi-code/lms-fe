@@ -83,7 +83,7 @@ const TrainerProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f0f1b] text-white p-6 flex flex-col items-center">
+    <div className="min-h-screen bg-[#0f0f1b] text-gray-400 p-6 flex flex-col items-center">
       <ToastContainer />
       {/* Avatar Section */}
       <div className="relative">
