@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FiArrowLeft, FiUpload, FiTrash2, FiEdit2, FiX } from 'react-icons/fi';
-import { SquareLoader } from 'react-spinners';
+import {
+  FiArrowLeft,
+  FiUpload,
+  FiTrash2,
+  FiEdit2,
+  FiX,
+} from 'react-icons/fi';
+import { SquareLoader, ClipLoader } from 'react-spinners';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const CourseVideosPage = () => {
   const { courseId } = useParams();
-  const navigate = useNavigate();
-
   const [course, setCourse] = useState(null);
-  const [video, setVideo] = useState(null); // Single video object now
+  const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editingVideo, setEditingVideo] = useState(null);
   const [form, setForm] = useState({ title: '', description: '', thumbnail: null });
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const navigate = useNavigate();
 
   const fetchCourseDetails = async () => {
     try {
@@ -27,13 +34,19 @@ const CourseVideosPage = () => {
     }
   };
 
-  const fetchVideos = async () => {
+  const fetchVideo = async () => {
     try {
-      const res = await axios.get(`https://neuronest-be-production.up.railway.app/api/a2/course/get-all-videos/${courseId}`, {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `https://neuronest-be-production.up.railway.app/api/a2/course/get-all-videos/${courseId}`,
+        { withCredentials: true }
+      );
       const courseData = res.data.data[0];
-      setVideo(courseData?.videos || null);
+      const v = courseData?.videos;
+      if (v && Object.keys(v).length !== 0) {
+        setVideo(v);
+      } else {
+        setVideo(null);
+      }
     } catch {
       toast.error('Failed to fetch video');
     } finally {
@@ -41,25 +54,28 @@ const CourseVideosPage = () => {
     }
   };
 
-  const handleDelete = async () => {
-    if (!video?._id) return;
+  const handleDelete = async (videoId) => {
+    if (!window.confirm("Are you sure you want to delete this video?")) return;
+    setIsDeleting(true);
     try {
-      await axios.delete(`https://neuronest-be-production.up.railway.app/api/a2/videos/delete/${video._id}`, {
+      await axios.delete(`https://neuronest-be-production.up.railway.app/api/a2/videos/delete/${videoId}`, {
         withCredentials: true,
       });
       toast.success('Video deleted');
       setVideo(null);
     } catch {
       toast.error('Error deleting video');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
-  const openEditModal = () => {
-    setEditingVideo(video);
+  const openEditModal = (videoData) => {
+    setEditingVideo(videoData);
     setForm({
-      title: video.title,
-      description: video.description,
-      thumbnail: null
+      title: videoData.title,
+      description: videoData.description,
+      thumbnail: null,
     });
   };
 
@@ -84,21 +100,26 @@ const CourseVideosPage = () => {
     if (form.description) data.append('description', form.description);
     if (form.thumbnail) data.append('thumbnail', form.thumbnail);
 
+    setIsUpdating(true);
     try {
-      await axios.put(`https://neuronest-be-production.up.railway.app/api/a2/videos/update/${editingVideo._id}`, data, {
-        withCredentials: true,
-      });
+      await axios.put(
+        `https://neuronest-be-production.up.railway.app/api/a2/videos/update/${editingVideo._id}`,
+        data,
+        { withCredentials: true }
+      );
       toast.success('Video updated!');
       closeEditModal();
-      fetchVideos();
+      fetchVideo();
     } catch {
       toast.error('Failed to update video');
+    } finally {
+      setIsUpdating(false);
     }
   };
 
   useEffect(() => {
     fetchCourseDetails();
-    fetchVideos();
+    fetchVideo();
   }, [courseId]);
 
   if (loading) {
@@ -112,8 +133,6 @@ const CourseVideosPage = () => {
   return (
     <div className="min-h-screen bg-[#0f0f1b] text-white p-6">
       <ToastContainer />
-      
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => navigate('/trainer/dashboard')}
@@ -129,7 +148,6 @@ const CourseVideosPage = () => {
         </button>
       </div>
 
-      {/* Course Info */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-pink-400">{course?.courseName}</h1>
         <p className="text-gray-400 mt-1 text-sm">
@@ -137,36 +155,44 @@ const CourseVideosPage = () => {
         </p>
       </div>
 
-      {/* Video Card */}
       {!video ? (
         <div className="text-center text-gray-500 mt-20 text-lg">No video uploaded yet.</div>
       ) : (
-        <div className="bg-[#181828] rounded-lg p-4 border border-cyan-500/10 shadow-md relative max-w-lg mx-auto">
-          <video controls src={video.video} className="w-full rounded mb-3" />
-          <img
-            src={video.thumbnail}
-            alt="Video Thumbnail"
-            className="w-full h-40 object-cover rounded mb-3"
-          />
-          <h2 className="text-lg font-semibold text-cyan-300">{video.title}</h2>
-          <p className="text-sm text-gray-400 mt-1">{video.description}</p>
-          <p className="mt-2 text-xs text-gray-500">
-            Status: {video.isPublished ? 'Published ✅' : 'Unpublished ❌'}
-          </p>
-          <div className="absolute top-3 right-3 flex gap-3">
-            <FiEdit2
-              onClick={openEditModal}
-              className="cursor-pointer text-yellow-400 hover:text-yellow-300"
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="bg-[#181828] p-4 rounded-lg border border-cyan-500/10 shadow relative">
+            <img
+              src={video.thumbnail}
+              alt="thumbnail"
+              className="rounded w-full h-36 object-cover mb-3"
             />
-            <FiTrash2
-              onClick={handleDelete}
-              className="cursor-pointer text-red-500 hover:text-red-400"
+            <video
+              src={video.video}
+              controls
+              className="w-full h-32 rounded-md object-cover"
             />
+            <h2 className="text-lg font-semibold text-cyan-300 mt-2">{video.title}</h2>
+            <p className="text-sm text-gray-400 mt-1">{video.description}</p>
+            <p className="mt-2 text-xs text-gray-500">
+              Status: {video.isPublished ? 'Published ✅' : 'Unpublished ❌'}
+            </p>
+            <div className="absolute top-3 right-3 flex gap-3">
+              <FiEdit2
+                onClick={() => openEditModal(video)}
+                className="cursor-pointer text-yellow-400 hover:text-yellow-300"
+              />
+              {isDeleting ? (
+                <ClipLoader size={18} color="red" />
+              ) : (
+                <FiTrash2
+                  onClick={() => handleDelete(video._id)}
+                  className="cursor-pointer text-red-500 hover:text-red-400"
+                />
+              )}
+            </div>
           </div>
         </div>
       )}
 
-      {/* Edit Modal */}
       {editingVideo && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex justify-center items-center">
           <div className="bg-[#101020] p-6 rounded-xl max-w-md w-full text-white relative">
@@ -203,9 +229,10 @@ const CourseVideosPage = () => {
               />
               <button
                 onClick={handleUpdateSubmit}
-                className="w-full py-2 mt-2 rounded-full bg-gradient-to-r from-pink-500 to-cyan-500 hover:from-pink-600 hover:to-purple-500 font-semibold"
+                disabled={isUpdating}
+                className="w-full py-2 mt-2 rounded-full bg-gradient-to-r from-pink-500 to-cyan-500 hover:from-pink-600 hover:to-purple-500 font-semibold flex justify-center"
               >
-                Update Video
+                {isUpdating ? <ClipLoader size={20} color="#fff" /> : "Update Video"}
               </button>
             </div>
           </div>
