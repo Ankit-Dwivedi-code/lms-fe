@@ -27,18 +27,20 @@ const CourseVideosPage = () => {
   };
 
   const fetchVideos = async () => {
-    try {
-      const res = await axios.get(`https://neuronest-be-production.up.railway.app/api/a2/course/get-all-videos/${courseId}`, {
-        withCredentials: true,
-      });
-      const courseData = res.data.data[0];
-      setVideos(courseData?.videos ? [courseData.videos] : []);
-    } catch {
-      toast.error('Failed to fetch videos');
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const res = await axios.get(`https://neuronest-be-production.up.railway.app/api/a2/course/get-all-videos/${courseId}`, {
+      withCredentials: true,
+    });
+    const courseData = res.data.data[0];
+    // ✅ Correctly set videos if it's already an array
+    setVideos(courseData?.videos ? courseData.videos : []);
+  } catch {
+    toast.error('Failed to fetch videos');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleDelete = async (videoId) => {
     try {
