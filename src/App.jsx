@@ -70,6 +70,8 @@ import EnrolledCourses from './components/student_enrolled_courses/EnrolledCours
 import StudentCourseProtectedRoute from './StudentCourseProtectedRoute.jsx';
 import CourseAccess from './components/student_course_access/CourseAccess.jsx';
 import CourseEdit from './components/trainer_edit_course/CourseEdit.jsx';
+import UploadVideoPage from './components/trainer_upload_video/UploadVideoPage.jsx';
+import TrainerProfile from './components/trainer_profile_page/TrainerProfile.jsx';
 
 
 function App() {
@@ -297,6 +299,24 @@ function App() {
           <TrainerNavbar />
           <CourseEdit />
           <Footer />
+        </TrainerProtectedRoute>
+        </>} />
+
+        {/* Trainer upload video */}
+        <Route path='/trainer/upload-video/:courseId' element={<>
+        <TrainerProtectedRoute>
+          <TrainerNavbar />
+          <UploadVideoPage />
+          <Footer />
+        </TrainerProtectedRoute>
+        </>} />
+
+        {/* Trainer profile page */}
+        <Route path='/trainer/profile' element={<>
+        <TrainerProtectedRoute>
+        <TrainerNavbar />
+        <TrainerProfile />
+        <Footer />
         </TrainerProtectedRoute>
         </>} />
 
