@@ -49,7 +49,7 @@ const TrainerProfile = () => {
     setAvatarLoading(true);
 
     try {
-      await axios.put('https://neuronest-be-production.up.railway.app/api/a2/trainer/update-avatar', data, {
+      await axios.patch('https://neuronest-be-production.up.railway.app/api/a2/trainer/update-avatar', data, {
         withCredentials: true,
       });
       toast.success('Avatar updated');
@@ -63,7 +63,7 @@ const TrainerProfile = () => {
 
   const handleProfileUpdate = async () => {
     try {
-      await axios.put('https://neuronest-be-production.up.railway.app/api/a2/trainer/update-details', form, {
+      await axios.patch('https://neuronest-be-production.up.railway.app/api/a2/trainer/update-details', form, {
         withCredentials: true,
       });
       toast.success('Profile updated!');
