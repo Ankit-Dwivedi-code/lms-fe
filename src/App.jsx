@@ -30,7 +30,6 @@ import AdminSignup from './components/admin_signup/AdminSignup.jsx';
 import SignupOtpVerification from './components/admin_signup_otp/SignupOtpVerification.jsx';
 import AdminLogin from './components/admin_login/AdminLogin.jsx';
 import VerifyLoginAdmin from './components/admin_login_otp/VerifyLoginAdmin.jsx';
-import AdminDashboard from './components/admin_dasboard/AdminDashboard.jsx';
 import Trainer from './components/admin_dasboard/sub_components/Trainer.jsx';
 import StudentList from './components/admin_dasboard/sub_components/StudentList.jsx';
 import StudentSearch from './components/admin_dasboard/sub_components/StudentSearch.jsx';
@@ -72,6 +71,9 @@ import CourseAccess from './components/student_course_access/CourseAccess.jsx';
 import CourseEdit from './components/trainer_edit_course/CourseEdit.jsx';
 import UploadVideoPage from './components/trainer_upload_video/UploadVideoPage.jsx';
 import TrainerProfile from './components/trainer_profile_page/TrainerProfile.jsx';
+import AdminDashboard from './components/admin_dashboard_page/AdminDashboard.jsx';
+import AdminNavbar from './components/admin_navbar/AdminNavbar.jsx';
+import AdminProtectedRoute from './AdminProtectedRoute.jsx';
 
 
 function App() {
@@ -161,9 +163,11 @@ function App() {
         </>} />
 
         <Route path="/admin-dashboard" element={<>
-        <Navbar />
+        <AdminProtectedRoute>
+        <AdminNavbar />
         <AdminDashboard />
         <Footer />
+        </AdminProtectedRoute>
         </>} >
         <Route path="trainer" element={<Trainer />} />
           <Route path="student" element={<StudentList />} />
