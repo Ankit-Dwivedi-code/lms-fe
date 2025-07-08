@@ -35,20 +35,21 @@ const AdminDashboard = () => {
     }
   };
 
-  const generateInviteCode = async () => {
-    setGenerating(true);
-    try {
-      const res = await axios.get('https://neuronest-be-production.up.railway.app/api/a2/admin/generate-invite-code', {}, {
-        withCredentials: true,
-      });
-      setInviteCode(res.data.data);
-      toast.success('Invite code generated!');
-    } catch {
-      toast.error('Failed to generate invite code');
-    } finally {
-      setGenerating(false);
-    }
-  };
+ const generateInviteCode = async () => {
+  setGenerating(true);
+  try {
+    const res = await axios.get(
+      'https://neuronest-be-production.up.railway.app/api/a2/admin/generate-invite-code',
+      { withCredentials: true } // ✅ Move config here as 2nd param
+    );
+    setInviteCode(res.data.data.inviteCode); // ✅ Access the nested field correctly
+    toast.success('Invite code generated!');
+  } catch {
+    toast.error('Failed to generate invite code');
+  } finally {
+    setGenerating(false);
+  }
+};
 
   useEffect(() => {
     fetchCourses();
