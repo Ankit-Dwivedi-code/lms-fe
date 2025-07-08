@@ -25,7 +25,7 @@ const AdminDashboard = () => {
 
   const handlePublish = async (courseId) => {
     try {
-      await axios.post(`https://neuronest-be-production.up.railway.app/api/a2/admin/publish-course/${courseId}`, {}, {
+      await axios.put(`https://neuronest-be-production.up.railway.app/api/a2/admin/publish-course/${courseId}`, {}, {
         withCredentials: true,
       });
       toast.success('Course published');
@@ -38,7 +38,7 @@ const AdminDashboard = () => {
   const generateInviteCode = async () => {
     setGenerating(true);
     try {
-      const res = await axios.post('https://neuronest-be-production.up.railway.app/api/a2/admin/generate-invite-code', {}, {
+      const res = await axios.get('https://neuronest-be-production.up.railway.app/api/a2/admin/generate-invite-code', {}, {
         withCredentials: true,
       });
       setInviteCode(res.data.data);
