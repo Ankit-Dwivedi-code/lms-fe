@@ -8,33 +8,39 @@ const CourseDetail = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
+  const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(
-          `https://neuronest-be-production.up.railway.app/api/a2/course/get/${courseId}`,
-          { credentials: "include" }
-        );
-        const data = await res.json();
-        if (data.success) setCourse(data.data);
-        else toast.error("Course not found");
+        const [courseRes, enrollRes, studentRes] = await Promise.all([
+          fetch(`https://neuronest-be-production.up.railway.app/api/a2/course/get/${courseId}`, {
+            credentials: "include",
+          }),
+          fetch(`https://neuronest-be-production.up.railway.app/api/a2/students/check-enrolled-courses/${courseId}`, {
+            credentials: "include",
+          }),
+          fetch(`http://localhost:8000/api/a2/students/get-student`, {
+            credentials: "include",
+          }),
+        ]);
 
-        const enrollRes = await fetch(
-          `https://neuronest-be-production.up.railway.app/api/a2/students/check-enrolled-courses/${courseId}`,
-          { credentials: "include" }
-        );
+        const courseData = await courseRes.json();
         const enrollData = await enrollRes.json();
-        if (enrollData.success && enrollData.data?.isEnrolled) {
-          setIsEnrolled(true);
-        }
+        const studentData = await studentRes.json();
+
+        if (courseData.success) setCourse(courseData.data);
+        if (enrollData.success && enrollData.data?.isEnrolled) setIsEnrolled(true);
+        if (studentData.success) setStudent(studentData.data);
+
       } catch (err) {
-        console.error("Error loading course:", err);
-        toast.error("Failed to load course details.");
+        console.error("Error loading data:", err);
+        toast.error("Failed to load data.");
       }
     };
+
     fetchData();
   }, [courseId]);
 
@@ -49,7 +55,7 @@ const CourseDetail = () => {
   };
 
   const handlePayment = async () => {
-    if (!course) return;
+    if (!course || !student) return;
     setLoading(true);
 
     const loaded = await loadRazorpayScript();
@@ -77,7 +83,7 @@ const CourseDetail = () => {
       }
 
       const options = {
-        key: "rzp_test_Bp55NAok5a31TY",
+        key: import.meta.env.VITE_RAZORPAY_KEY, // ✅ From .env
         amount: data.data.amount,
         currency: "INR",
         name: course.courseName,
@@ -107,14 +113,13 @@ const CourseDetail = () => {
               toast.error("Verification failed: " + verifyData.message);
             }
           } catch (err) {
-            console.error("Verification error:", err);
-            toast.error("Verification failed.");
+            toast.error("Verification error.");
           }
         },
         prefill: {
-          name: "NeuroNest User",
-          email: "user@example.com",
-          contact: "9999999999",
+          name: student.username || "",
+          email: student.email || "",
+          contact: student.phone || "",
         },
         theme: { color: "#8e2de2" },
       };
@@ -122,22 +127,18 @@ const CourseDetail = () => {
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
-      console.error("Payment error:", err);
-      toast.error("Payment process failed.");
+      toast.error("Payment failed.");
     } finally {
       setLoading(false);
     }
   };
 
-  const renderStars = (count) => {
-    return (
-      <div className="flex text-yellow-400 mb-2">
-        {Array.from({ length: 5 }, (_, i) => (
-          <FaStar key={i} className={i < count ? "text-yellow-400" : "text-gray-500"} />
-        ))}
-      </div>
-    );
-  };
+  const avgRating =
+    course?.reviews?.length > 0
+      ? Math.round(
+          course.reviews.reduce((acc, r) => acc + r.rating, 0) / course.reviews.length
+        )
+      : course?.ratings;
 
   if (!course) {
     return (
@@ -147,13 +148,6 @@ const CourseDetail = () => {
     );
   }
 
-  const avgRating =
-    course.reviews?.length > 0
-      ? Math.round(
-          course.reviews.reduce((acc, r) => acc + r.rating, 0) / course.reviews.length
-        )
-      : course.ratings;
-
   return (
     <div className="min-h-screen bg-[#0f0f1b] text-white px-5 py-12">
       <ToastContainer position="top-center" autoClose={3000} theme="dark" />
@@ -162,22 +156,29 @@ const CourseDetail = () => {
         <div className="flex-1">
           <h1 className="text-4xl font-bold text-cyan-400 mb-4">{course.courseName}</h1>
 
-          {renderStars(avgRating)}
+          <div className="flex text-yellow-400 mb-2">
+            {[...Array(5)].map((_, i) => (
+              <FaStar
+                key={i}
+                className={i < avgRating ? "text-yellow-400" : "text-gray-500"}
+              />
+            ))}
+          </div>
+
           <p className="text-sm text-gray-400 mb-4">
             ({course.reviews?.length || 0} Reviews)
           </p>
+          <p className="text-lg text-gray-300 mb-1">
+            <span className="font-semibold text-pink-400">Level:</span> {course.level}
+          </p>
+          <p className="text-lg text-gray-300 mb-1">
+            <span className="font-semibold text-pink-400">Language:</span> {course.language}
+          </p>
+          <p className="text-lg text-gray-300 mb-1">
+            <span className="font-semibold text-pink-400">Category:</span> {course.category}
+          </p>
 
-          <p className="text-gray-300 text-lg mb-2">
-            <span className="font-medium text-pink-400">Level:</span> {course.level}
-          </p>
-          <p className="text-gray-300 text-lg mb-2">
-            <span className="font-medium text-pink-400">Language:</span> {course.language}
-          </p>
-          <p className="text-gray-300 text-lg mb-2">
-            <span className="font-medium text-pink-400">Category:</span> {course.category}
-          </p>
-
-          <p className="text-gray-400 mt-4 mb-6 leading-relaxed">{course.description}</p>
+          <p className="text-gray-400 my-4">{course.description}</p>
 
           <div className="text-xl font-semibold text-green-400 mb-6">
             Price: ₹{course.price}
@@ -186,7 +187,7 @@ const CourseDetail = () => {
           {isEnrolled ? (
             <button
               onClick={() => navigate(`/course-access/${courseId}`)}
-              className="px-6 py-3 rounded-full font-semibold transition-all shadow-lg bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-blue-500"
+              className="px-6 py-3 rounded-full bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-blue-500 font-semibold"
             >
               Go to Course
             </button>
@@ -214,24 +215,6 @@ const CourseDetail = () => {
           />
         </div>
       </div>
-
-      {/* Reviews */}
-      {/* {course.reviews?.length > 0 || course.ratings > 0 ? (
-  <div className="flex items-center mb-4">
-    {Array.from({ length: 5 }).map((_, index) => (
-      <span key={index} className={`text-xl mr-1 ${index < (
-        course.reviews?.length > 0
-          ? Math.round(course.reviews.reduce((a, r) => a + r.rating, 0) / course.reviews.length)
-          : Math.round(course.ratings)
-      ) ? "text-yellow-400" : "text-gray-600"}`}>
-        ★
-      </span>
-    ))}
-    <span className="text-sm text-gray-400 ml-2">
-      ({course.reviews?.length || 0} reviews)
-    </span>
-  </div>
-) : null} */}
     </div>
   );
 };
