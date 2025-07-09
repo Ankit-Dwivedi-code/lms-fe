@@ -22,7 +22,7 @@ const CourseDetail = () => {
           fetch(`https://neuronest-be-production.up.railway.app/api/a2/students/check-enrolled-courses/${courseId}`, {
             credentials: "include",
           }),
-          fetch(`http://localhost:8000/api/a2/students/get-student`, {
+          fetch(`https://neuronest-be-production.up.railway.app/api/a2/students/get-student`, {
             credentials: "include",
           }),
         ]);
