@@ -216,7 +216,7 @@ const CourseDetail = () => {
       </div>
 
       {/* Reviews */}
-      {course.reviews?.length > 0 || course.ratings > 0 ? (
+      {/* {course.reviews?.length > 0 || course.ratings > 0 ? (
   <div className="flex items-center mb-4">
     {Array.from({ length: 5 }).map((_, index) => (
       <span key={index} className={`text-xl mr-1 ${index < (
@@ -231,7 +231,7 @@ const CourseDetail = () => {
       ({course.reviews?.length || 0} reviews)
     </span>
   </div>
-) : null}
+) : null} */}
     </div>
   );
 };
