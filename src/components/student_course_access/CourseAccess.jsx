@@ -19,7 +19,7 @@ const CourseAccess = () => {
         const [studentRes, videoRes, reviewedRes] = await Promise.all([
           axios.get(`https://neuronest-be-production.up.railway.app/api/a2/students/get-student`, { withCredentials: true }),
           axios.get(`https://neuronest-be-production.up.railway.app/api/a2/videos/course-videos/${courseId}`, { withCredentials: true }),
-          axios.get(`http://localhost:8000/api/a2/course/${courseId}/reviewed`, { withCredentials: true }),
+          axios.get(`https://neuronest-be-production.up.railway.app/api/a2/course/${courseId}/reviewed`, { withCredentials: true }),
         ]);
 
         setStudent(studentRes.data.data);
