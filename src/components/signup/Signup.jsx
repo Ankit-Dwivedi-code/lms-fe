@@ -59,9 +59,9 @@ const SignupPage = () => {
 
       {/* Bottom Fixed Admin/Trainer Links */}
       <div className="absolute bottom-1 right-2 text-right text-sm text-gray-400 space-y-1">
-        <p className="text-xs">For internal roles:</p>
+        <p className="text-xs font-bold">For internal roles:</p>
         <Link to="/signup/trainer" className="hover:text-cyan-400 underline">Trainer Signup</Link><br />
-        <Link to="/signup/admin" className="hover:text-pink-400 underline">Admin Signup</Link>
+        <Link to="/admin-login" className="hover:text-pink-400 underline">Admin Login</Link>
       </div>
     </div>
   );
