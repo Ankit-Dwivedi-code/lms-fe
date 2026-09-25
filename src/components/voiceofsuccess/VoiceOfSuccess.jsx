@@ -18,7 +18,7 @@ const VoiceOfSuccess = () => {
       feedback: 'The course flow was smooth and helped me become confident in responsive design and deployment.',
     },
     {
-      name: 'Riya Jha',
+      name: 'Rohit Kumar',
       role: 'ML Engineer',
       feedback: 'NeuroNest’s ML training opened career opportunities with both theory and real projects.',
     },
